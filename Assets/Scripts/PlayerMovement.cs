@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovements : MonoBehaviour
 {
@@ -13,12 +14,13 @@ public class PlayerMovements : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    void Update() //FIXME does not work
     {
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
 
-        input.Normalize();
+        //input.Normalize();
+        Debug.Log(input);
     }
 
     private void FixedUpdate()
