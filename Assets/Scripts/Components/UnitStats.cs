@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class UnitStats : MonoBehaviour
 {
-    public UnitStatsProfile profile;
+    public UnitStatProfile profile;
 
     public float MaxHP { get; private set; }
     public float CurrentHP { get; private set; }
@@ -21,6 +21,7 @@ public class UnitStats : MonoBehaviour
     public void TakeDamage(float damageAmount)
     {
         CurrentHP = Mathf.Clamp(CurrentHP - damageAmount, 0, MaxHP);
+        Debug.Log($"{damageAmount} damage Taken! new HP is {CurrentHP}");
         OnDamageTaken?.Invoke(damageAmount);
         if (CurrentHP <= 0)
         {
@@ -35,7 +36,7 @@ public class UnitStats : MonoBehaviour
         //other death logic or something
     }
 
-    private void InitUnitStats(UnitStatsProfile profile)
+    private void InitUnitStats(UnitStatProfile profile)
     {
         if (profile == null)
         {
@@ -49,19 +50,8 @@ public class UnitStats : MonoBehaviour
         Speed = profile.speed;
     }
 
-    //TEMPORARY TESTING this is here to print the hp every once in a while to test damage
     private void Start()
     {
         Debug.Log(CurrentHP);
-    }
-    private int counter;
-    private void Update()
-    {
-        counter++;
-        if (counter%1000 == 0)
-        {
-            counter -= 1000;
-            Debug.Log(CurrentHP);
-        }
     }
 }

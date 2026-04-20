@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8487607139639716164}
   - component: {fileID: 6607276767135652599}
+  - component: {fileID: 1586242827133480834}
   m_Layer: 0
   m_Name: Square
   m_TagString: Untagged
@@ -31,7 +32,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3543497250828610377}
-  - {fileID: 7364317447910383224}
   - {fileID: 8787608611991168450}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -62,45 +62,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!1 &4160129506978813756
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7364317447910383224}
-  - component: {fileID: 6550966838034122391}
-  m_Layer: 0
-  m_Name: UnitStats
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7364317447910383224
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4160129506978813756}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8487607139639716164}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6550966838034122391
+--- !u!114 &1586242827133480834
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4160129506978813756}
+  m_GameObject: {fileID: 3531306972543427325}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a687f315db949940af9bab3e6b1b397, type: 3}
@@ -212,7 +180,7 @@ PrefabInstance:
     - target: {fileID: 4499481603196694649, guid: e2cccc89725d95041b853deac3b6df8c, type: 3}
       propertyPath: stats
       value: 
-      objectReference: {fileID: 6550966838034122391}
+      objectReference: {fileID: 1586242827133480834}
     - target: {fileID: 6436158805979900311, guid: e2cccc89725d95041b853deac3b6df8c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
