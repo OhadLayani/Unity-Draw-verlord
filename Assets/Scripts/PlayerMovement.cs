@@ -14,13 +14,12 @@ public class PlayerMovements : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update() //FIXME does not work
+    void Update()
     {
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
 
-        //input.Normalize();
-        Debug.Log(input);
+        input.Normalize();
     }
 
     private void FixedUpdate()
