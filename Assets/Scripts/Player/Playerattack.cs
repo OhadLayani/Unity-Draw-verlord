@@ -47,6 +47,7 @@ public class Playerttack : MonoBehaviour
     }
     private IEnumerator AttackRoutine()
     {
+        Debug.Log("started Attack");
         canAttack = false;
         AimAtMouse(); // rotate only now
 
