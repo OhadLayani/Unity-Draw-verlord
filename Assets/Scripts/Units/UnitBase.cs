@@ -10,6 +10,7 @@ public abstract class UnitBase : MonoBehaviour
     public float Damage { get; protected set; }
     public float Speed { get; protected set; }
     public float AttackCooldown { get; protected set; }
+    public float AttackDuration { get; protected set; }
     public bool isFriendly { get; protected set; }
 
     void Awake()
@@ -25,6 +26,7 @@ public abstract class UnitBase : MonoBehaviour
         Damage = profile.damage;
         Speed = profile.speed;
         AttackCooldown = profile.attackCooldown;
+        AttackDuration = profile.attackDuration;
         isFriendly = profile.isFriendly;
     }
 
