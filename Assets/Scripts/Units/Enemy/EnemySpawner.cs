@@ -19,7 +19,11 @@ public class EnemySpawner : MonoBehaviour
     void Update()
     {
         if (enemyPrefab == null || mainCamera == null)
+        {
+            Debug.LogError("camera or enemyPrefab not found");
             return;
+        }
+            
 
         int currentEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length;
 
@@ -37,6 +41,7 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy()
     {
+        Debug.Log("spawned enemy");
         Vector3 spawnPosition = GetSpawnPositionOutsideCamera();
         Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, transform);
     }
