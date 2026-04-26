@@ -34,6 +34,8 @@ public class UnitStats : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} says: Man I'm dead");
         OnDeath?.Invoke();
+        Destroy(gameObject);
+
         //other death logic or something
     }
 
