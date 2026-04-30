@@ -1,24 +1,24 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 using static UnityEngine.Rendering.DebugUI;
 
 public class Hurtbox : MonoBehaviour
 {
-    [SerializeField] private UnitStats stats;
+    [SerializeField] private UnitBase unit;
+
+    public bool HurtboxIsFriendly  { get; private set; }
 
     private void Awake()
     {
-        if (stats == null)
+        if (unit == null)
         {
-            Debug.LogError("No UnitStats component found, hurtbox will not work properly and likely crash the game");
+            Debug.LogError("No Unit component asssigned on hurtbox, hurtbox will not work properly and likely crash the game");
         }
+        HurtboxIsFriendly = unit.isFriendly;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    public void TriggerDamageTaken(float hitDamage)
     {
-        Debug.Log("detected collision");
-        if (other.TryGetComponent<Hitbox>(out var hitbox))
-        {
-            stats.TakeDamage(hitbox.HitDamage);
-        }
+        unit.TakeDamage(hitDamage);
     }
 }

@@ -2,15 +2,39 @@ using UnityEngine;
 
 public class Hitbox : MonoBehaviour
 {
+    [SerializeField]
+    private UnitBase attackSource;
+
+    public bool HitboxIsFriendly { get; private set; }
     public float HitDamage { get; private set; }
 
     private Collider2D col;
 
     private void Awake()
     {
+        if (attackSource == null)
+        {
+            Debug.LogError("No attack source Unit component asssigned on hitbox, falling back on default value");
+            HitDamage = 5f;
+            HitboxIsFriendly = false;
+            return;
+        }
+
         col = GetComponentInParent<Collider2D>();
 
-        HitDamage = 5f; //TEMPORARY FIXME for now this is the damage but in the future include attack damage calculations that take into account the attacker's attack stat
+        HitDamage = attackSource.Damage;
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log("detected collision");
+        if (other.TryGetComponent<Hurtbox>(out var hurtbox))
+        {
+            if (HitboxIsFriendly == hurtbox.HurtboxIsFriendly)
+            {
+                return;
+            }
+            hurtbox.TriggerDamageTaken(HitDamage);
+        }
     }
 
     private void OnDrawGizmos() //AI generated function to see if it visualizes hitbox
