@@ -2,142 +2,100 @@ using UnityEngine;
 
 public class EnemyFollow : MonoBehaviour
 {
+    private enum ENEMY_STATE
+    {
+        MOVE,
+        STOP,
+        OUT_THE_WAY
+    }
+
     [Header("Chase")]
     public float speed = 3f;
     public float stopDistance = 2.8f;
 
-    [Header("Avoidance")]
-    public float avoidanceRadius = 1.8f;
-    public float sidewaysStrength = 4f;
-    public LayerMask enemyLayer;
-
-    [Header("Noise")]
-    public float noiseStrength = 0.15f;
-    public float noiseChangeMin = 0.4f;
-    public float noiseChangeMax = 1.2f;
+    private ENEMY_STATE currentState = ENEMY_STATE.MOVE;
 
     private Transform player;
     private Rigidbody2D rb;
 
-    private Vector2 noiseDirection;
-    private float noiseTimer;
-
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
+        PlayerMovements playerMovement = FindFirstObjectByType<PlayerMovements>();
+
+        if (playerMovement != null)
         {
-            player = playerObj.transform;
+            player = playerMovement.transform;
         }
         else
         {
-            Debug.LogError("No object with Player tag was found.");
+            Debug.LogError("No PlayerMovement found in the scene.");
         }
-
-        PickNewNoiseDirection();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (player == null || rb == null) return;
-
-        UpdateNoise();
+        if (player == null || rb == null)
+            return;
 
         Vector2 myPos = rb.position;
         Vector2 playerPos = player.position;
 
         Vector2 toPlayer = playerPos - myPos;
         float distanceToPlayer = toPlayer.magnitude;
-
-        if (distanceToPlayer <= stopDistance)
+        // Flip toward player
+        if (toPlayer.x >= 0)
         {
-            rb.linearVelocity = Vector2.zero;
-            return;
-        }
-
-        Vector2 moveDir = toPlayer.normalized;
-        Vector2 avoidance = GetSidewaysAvoidance(moveDir);
-
-        // Forward movement is reduced a bit so avoidance can actually win.
-        Vector2 finalDir = (moveDir * 0.6f) + avoidance + (noiseDirection * noiseStrength);
-
-        if (finalDir.sqrMagnitude > 0.001f)
-        {
-            finalDir.Normalize();
-            rb.linearVelocity = finalDir * speed;
+            transform.rotation = Quaternion.Euler(0f, 180f, 0f);
         }
         else
         {
-            rb.linearVelocity = Vector2.zero;
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
-    }
 
-    Vector2 GetSidewaysAvoidance(Vector2 forwardDir)
-    {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, avoidanceRadius, enemyLayer);
-
-        Vector2 totalAvoidance = Vector2.zero;
-
-        foreach (Collider2D hit in hits)
+        switch (currentState)
         {
-            if (hit.gameObject == gameObject) continue;
-
-            Vector2 toOther = (Vector2)hit.transform.position - rb.position;
-            float dist = toOther.magnitude;
-
-            if (dist < 0.001f) continue;
-
-            Vector2 dirToOther = toOther / dist;
-
-            // Only sidestep enemies that are generally in front of us.
-            float frontDot = Vector2.Dot(forwardDir, dirToOther);
-
-            if (frontDot > 0f)
-            {
-                Vector2 sideStep = new Vector2(-dirToOther.y, dirToOther.x);
-
-                float crossZ = forwardDir.x * dirToOther.y - forwardDir.y * dirToOther.x;
-                float sideSign = Mathf.Sign(crossZ);
-
-                // Prevent 0 sign edge case
-                if (sideSign == 0f)
+            case ENEMY_STATE.MOVE:
                 {
-                    sideSign = Random.value < 0.5f ? -1f : 1f;
+                    if (distanceToPlayer <= stopDistance)
+                    {
+                        rb.linearVelocity = Vector2.zero;
+                        currentState = ENEMY_STATE.STOP;
+                        break;
+                    }
+
+                    Vector2 moveDir = toPlayer.normalized;
+                    rb.linearVelocity = moveDir * speed;
+                    break;
                 }
 
-                sideStep *= sideSign;
+            case ENEMY_STATE.STOP:
+                {
+                    rb.linearVelocity = Vector2.zero;
 
-                float strength = 1f - Mathf.Clamp01(dist / avoidanceRadius);
-                totalAvoidance += sideStep.normalized * strength;
-            }
+                    if (distanceToPlayer > stopDistance)
+                    {
+                        currentState = ENEMY_STATE.MOVE;
+                    }
+
+                    break;
+                }
+
+            case ENEMY_STATE.OUT_THE_WAY:
+                {
+                    // Placeholder:
+                    // Later this state will move the enemy away from other enemies
+                    // to prevent overlapping or crowding.
+
+                    currentState = ENEMY_STATE.MOVE;
+                    break;
+                }
         }
-
-        return totalAvoidance * sidewaysStrength;
     }
 
-    void UpdateNoise()
+    private void OnDrawGizmosSelected()
     {
-        noiseTimer -= Time.fixedDeltaTime;
-
-        if (noiseTimer <= 0f)
-        {
-            PickNewNoiseDirection();
-        }
-    }
-
-    void PickNewNoiseDirection()
-    {
-        noiseDirection = Random.insideUnitCircle.normalized;
-        noiseTimer = Random.Range(noiseChangeMin, noiseChangeMax);
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, avoidanceRadius);
-
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, stopDistance);
     }
