@@ -31,7 +31,7 @@ public abstract class UnitBase : MonoBehaviour
     }
 
     //TODO attack constructor 
-    protected virtual void TakeDamage(float damageAmount)
+    public virtual void TakeDamage(float damageAmount)
     {
         CurrentHP = Mathf.Clamp(CurrentHP - damageAmount, 0, MaxHP);
         Debug.Log($"{gameObject.name} took {damageAmount} damage! new HP is {CurrentHP}"); ;
@@ -40,7 +40,7 @@ public abstract class UnitBase : MonoBehaviour
             Die();
         }
     }
-    protected virtual void Die()
+    public virtual void Die()
     {
         Debug.Log($"{gameObject.name} says: Man I'm dead");
     }
