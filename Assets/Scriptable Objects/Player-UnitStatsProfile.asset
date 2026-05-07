@@ -15,3 +15,6 @@ MonoBehaviour:
   maxHP: 10
   speed: 2
   damage: 5
+  attackCooldown: 0.35
+  attackDuration: 0.15
+  isFriendly: 1

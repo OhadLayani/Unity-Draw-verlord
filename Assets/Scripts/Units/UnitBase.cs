@@ -1,9 +1,12 @@
+using System.Collections;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using UnityEngine.LowLevel;
 
 public abstract class UnitBase : MonoBehaviour
 {
-    [SerializeField]
-    private UnitStatProfile profile;
+    [SerializeField] private UnitStatProfile profile;
+    [SerializeField] private GameObject attackObject;
 
     public float MaxHP { get; protected set; }
     public float CurrentHP { get; protected set; }
@@ -11,7 +14,9 @@ public abstract class UnitBase : MonoBehaviour
     public float Speed { get; protected set; }
     public float AttackCooldown { get; protected set; }
     public float AttackDuration { get; protected set; }
-    public bool isFriendly { get; protected set; }
+    public bool IsFriendly { get; protected set; }
+
+    protected bool attackReady = true;
 
     void Awake()
     {
@@ -27,7 +32,10 @@ public abstract class UnitBase : MonoBehaviour
         Speed = profile.speed;
         AttackCooldown = profile.attackCooldown;
         AttackDuration = profile.attackDuration;
-        isFriendly = profile.isFriendly;
+        IsFriendly = profile.isFriendly;
+
+        if (attackObject != null) { attackObject.SetActive(false); }
+
     }
 
     //TODO attack constructor 
@@ -45,8 +53,42 @@ public abstract class UnitBase : MonoBehaviour
         Debug.Log($"{gameObject.name} says: Man I'm dead");
     }
 
-    protected virtual void TriggerAttack()
+    public virtual void TriggerAttack(Vector3 attackTargetWorldPosition)
     {
-        //coroutine to start attack cooldown
+        if (attackObject == null)
+        {
+            Debug.LogWarning($"Attack object on {gameObject.name} is null, cannot trigger attack");
+            return;
+        }
+
+        if (!attackReady) return;
+        
+        float attackAngle = CalculateAttackAngle(attackTargetWorldPosition);
+
+        attackObject.transform.rotation = Quaternion.Euler(0f, 0f, attackAngle);
+
+        StartCoroutine(AttackRoutine());
+
+        float CalculateAttackAngle(Vector3 attackTargetWorldPosition)
+        {
+            float angle;
+
+            Vector2 direction = attackTargetWorldPosition - attackObject.transform.position;
+            angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            return angle;
+        }
+    }
+
+    protected IEnumerator AttackRoutine()
+    {
+        //Debug.Log("started Attack");
+        attackReady = false;
+
+        attackObject.SetActive(true);
+        yield return new WaitForSeconds(AttackDuration);
+        attackObject.SetActive(false);
+
+        yield return new WaitForSeconds(AttackCooldown);
+        attackReady = true;
     }
 }

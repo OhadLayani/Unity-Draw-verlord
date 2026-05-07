@@ -14,7 +14,7 @@ public class Hurtbox : MonoBehaviour
         {
             Debug.LogError("No Unit component asssigned on hurtbox, hurtbox will not work properly and likely crash the game");
         }
-        HurtboxIsFriendly = unit.isFriendly;
+        HurtboxIsFriendly = unit.IsFriendly;
     }
 
     public void TriggerDamageTaken(float hitDamage)

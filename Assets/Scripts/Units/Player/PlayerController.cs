@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.LowLevel;
 
 public class PlayerController : UnitBase
 {
@@ -7,7 +8,6 @@ public class PlayerController : UnitBase
 
     private Rigidbody2D rb;
     private Vector2 input;
-
    
     void Start()
     {
@@ -20,6 +20,15 @@ public class PlayerController : UnitBase
         input.y = Input.GetAxisRaw("Vertical");
 
         input.Normalize();
+
+        Camera mainCam = Camera.main;
+        Vector3 mouseWorldPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+
+        if (Input.GetMouseButton(0))
+        {
+            
+            TriggerAttack(mouseWorldPos);
+        }
     }
 
     private void FixedUpdate()
