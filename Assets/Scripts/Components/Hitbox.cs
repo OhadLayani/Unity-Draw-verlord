@@ -26,7 +26,7 @@ public class Hitbox : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("detected collision");
+       // Debug.Log("detected collision");
         if (other.TryGetComponent<Hurtbox>(out var hurtbox))
         {
             if (HitboxIsFriendly == hurtbox.HurtboxIsFriendly)

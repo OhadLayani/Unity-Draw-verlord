@@ -1,34 +1,45 @@
-using UnityEngine;
+    using UnityEngine;
+    using System;
 
 public class PlayerController : UnitBase
-{
-    public int InkCount { get; private set; }
-    private int maxInkCount = 10;
+    {
+    public static event Action<Vector2> OnDoodleChargeCommand;
 
-    private Rigidbody2D rb;
-    private Vector2 input;
+    public int InkCount { get; private set; }
+        private int maxInkCount = 10;
+
+        private Rigidbody2D rb;
+        private Vector2 input;
 
    
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
+        void Start()
+        {
+            rb = GetComponent<Rigidbody2D>();
+            InkCount = 0;
+        }
+
+        void Update()
+        {
+            input.x = Input.GetAxisRaw("Horizontal");
+            input.y = Input.GetAxisRaw("Vertical");
+
+            input.Normalize();
+        if (Input.GetMouseButtonDown(1)) // Right click
+        {
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 clickedPosition = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
+
+            OnDoodleChargeCommand?.Invoke(clickedPosition);
+        }
     }
 
-    void Update()
-    {
-        input.x = Input.GetAxisRaw("Horizontal");
-        input.y = Input.GetAxisRaw("Vertical");
+        private void FixedUpdate()
+        {
+            rb.linearVelocity = input * Speed;
+        }
 
-        input.Normalize();
+        public void ModifyInkCount(int inkDelta)
+        {
+            InkCount = Mathf.Clamp(InkCount + inkDelta, 0, maxInkCount);
+        }
     }
-
-    private void FixedUpdate()
-    {
-        rb.linearVelocity = input * Speed;
-    }
-
-    public void ModifyInkCount(int inkDelta)
-    {
-        InkCount = Mathf.Clamp(InkCount + inkDelta, 0, maxInkCount);
-    }
-}

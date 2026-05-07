@@ -12,7 +12,6 @@ public abstract class UnitBase : MonoBehaviour
     public float AttackCooldown { get; protected set; }
     public float AttackDuration { get; protected set; }
     public bool isFriendly { get; protected set; }
-
     void Awake()
     {
         if (profile == null)
