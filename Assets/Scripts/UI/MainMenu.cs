@@ -7,7 +7,7 @@ public class MainMenu : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadSceneAsync("Sample-UI"); //remember to switch to the scene that would contain the mvp
+        SceneManager.LoadSceneAsync("GameplayScene"); //remember to switch to the scene that would contain the mvp
     }
 
     public void QuitGame()
