@@ -41,7 +41,8 @@ public class DoodleController : UnitBase
         }
     }
 
-    private void OnEnable()
+    /*
+    private void OnEnable() FIXME
     {
         PlayerController.OnDoodleChargeCommand += OnChargeCommand;
     }
@@ -49,7 +50,7 @@ public class DoodleController : UnitBase
     private void OnDisable()
     {
         PlayerController.OnDoodleChargeCommand -= OnChargeCommand;
-    }
+    }*/
 
     private void OnChargeCommand(Vector2 targetPosition)
     {
@@ -171,7 +172,7 @@ public class DoodleController : UnitBase
         if (hurtbox == null)
             return;
 
-        if (hurtbox.HurtboxIsFriendly == isFriendly)
+        if (hurtbox.HurtboxIsFriendly == IsFriendly)
             return;
 
 
