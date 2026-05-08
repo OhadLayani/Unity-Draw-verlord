@@ -77,15 +77,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFollow
   speed: 2
-  stopDistance: 0.9
-  avoidanceRadius: 1.2
-  sidewaysStrength: 4
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  noiseStrength: 0
-  noiseChangeMin: 0.15
-  noiseChangeMax: 0.4
+  stopDistance: 1.4
 --- !u!114 &7125286825467811624
 MonoBehaviour:
   m_ObjectHideFlags: 0
