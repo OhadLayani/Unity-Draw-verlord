@@ -8,7 +8,7 @@ public class Hurtbox : MonoBehaviour
 
     public bool HurtboxIsFriendly  { get; private set; }
 
-    private void Awake()
+    private void Start()
     {
         if (unit == null)
         {

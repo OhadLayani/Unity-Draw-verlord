@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyFollow : MonoBehaviour
+public class EnemyFollow : UnitBase
 {
     private enum ENEMY_STATE
     {
@@ -22,11 +22,11 @@ public class EnemyFollow : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        PlayerMovements playerMovement = FindFirstObjectByType<PlayerMovements>();
+        PlayerController PlayerController = FindFirstObjectByType<PlayerController>();
 
-        if (playerMovement != null)
+        if (PlayerController != null)
         {
-            player = playerMovement.transform;
+            player = PlayerController.transform;
         }
         else
         {

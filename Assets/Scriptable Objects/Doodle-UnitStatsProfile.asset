@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c4dbd5cf9fe65e4a87196782451a3a6, type: 3}
   m_Name: Doodle-UnitStatsProfile
   m_EditorClassIdentifier: Assembly-CSharp::UnitStatProfile
-  maxHP: 10
+  maxHP: 5
   speed: 2
-  damage: 5
-  attackCooldown: 0.35
+  damage: 2
+  attackCooldown: 0.25
   attackDuration: 0.15
+  inkValue: 0
   isFriendly: 1
