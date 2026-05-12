@@ -61,6 +61,6 @@ public class PlayerController : UnitBase
     public void ModifyInkCount(int inkDelta)
     {
         InkCount = Mathf.Clamp(InkCount + inkDelta, 0, maxInkCount);
-        Debug.Log("Current count: " + InkCount);
+        //Debug.Log("Current count: " + InkCount);
     }
 }

@@ -1,3 +1,4 @@
+using UnityEditor.U2D;
 using UnityEngine;
 
 public class DoodleController : UnitBase
@@ -8,9 +9,11 @@ public class DoodleController : UnitBase
         CHARGE,
         ATTACK
     }
+    
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Sprite[] spriteFrames;
 
     [Header("Chase")]
-    public float speed = 3f;
     public float stopDistance = 2.8f;
 
     [Header("Follow Offset")]
@@ -20,6 +23,7 @@ public class DoodleController : UnitBase
     [Header("Attack Surround")]
     [SerializeField] private float attackSurroundRadius = 1.2f;
     private Vector2 attackOffset;
+
     [Header("Charge")]
     public float chargeStopDistance = 0.2f;
     public float idleTimeAtChargeLocation = 10f;
@@ -34,9 +38,7 @@ public class DoodleController : UnitBase
     private Hurtbox attackTarget;
 
     void Start()
-
     {
-
         rb = GetComponent<Rigidbody2D>();
 
         followOffset = Random.insideUnitCircle.normalized * followOffsetRadius;
@@ -90,8 +92,9 @@ public class DoodleController : UnitBase
                     }
 
                     Vector2 moveDir = toPlayer.normalized;
-                    rb.linearVelocity = moveDir * speed;
+                    rb.linearVelocity = moveDir * Speed;
 
+                    spriteRenderer.sprite = spriteFrames[0];
                     break;
                 }
 
@@ -103,13 +106,15 @@ public class DoodleController : UnitBase
                         break;
                     }
 
+                    spriteRenderer.sprite = spriteFrames[1];
+
                     Vector2 toTarget = chargeTargetPosition - (Vector2)transform.position;
                     float distanceToTarget = toTarget.magnitude;
 
                     if (distanceToTarget > chargeStopDistance)
                     {
                         Vector2 moveDir = toTarget.normalized;
-                        rb.linearVelocity = moveDir * speed;
+                        rb.linearVelocity = moveDir * Speed;
                     }
                     else
                     {
@@ -134,6 +139,8 @@ public class DoodleController : UnitBase
                         break;
                     }
 
+                    spriteRenderer.sprite = spriteFrames[2];
+
                     Vector2 targetPosition = (Vector2)attackTarget.transform.position + attackOffset;
                     Vector2 toTarget = targetPosition - (Vector2)transform.position;
                     float distanceToTarget = toTarget.magnitude;
@@ -142,14 +149,14 @@ public class DoodleController : UnitBase
                     {
                         rb.linearVelocity = Vector2.zero;
 
-                        Debug.Log("ATTACK");
+                        //Debug.Log("ATTACK");
                         TriggerAttack(attackTarget.transform.position);
 
                         break;
                     }
 
                     Vector2 moveDir = toTarget.normalized;
-                    rb.linearVelocity = moveDir * speed;
+                    rb.linearVelocity = moveDir * Speed;
 
                     break;
                 }
@@ -186,6 +193,6 @@ public class DoodleController : UnitBase
         attackOffset = Random.insideUnitCircle.normalized * attackSurroundRadius;
         currentState = DOODLE_STATE.ATTACK;
 
-        Debug.Log("Enemy detected");
+        //Debug.Log("Enemy detected");
     }
 }

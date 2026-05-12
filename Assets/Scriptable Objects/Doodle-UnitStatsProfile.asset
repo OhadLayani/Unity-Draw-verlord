@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Doodle-UnitStatsProfile
   m_EditorClassIdentifier: Assembly-CSharp::UnitStatProfile
   maxHP: 5
-  speed: 2
+  speed: 5
   damage: 2
   attackCooldown: 0.25
   attackDuration: 0.15

@@ -35,7 +35,7 @@ public abstract class UnitBase : MonoBehaviour
         IsFriendly = profile.isFriendly;
         InkValue = profile.inkValue;
         if (attackObject != null) { attackObject.SetActive(false); }
-        Debug.Log($"{gameObject.name} IsFriendly set to: {profile.isFriendly}");
+        //Debug.Log($"{gameObject.name} IsFriendly set to: {profile.isFriendly}");
 
     }
 
@@ -43,7 +43,7 @@ public abstract class UnitBase : MonoBehaviour
     public virtual void TakeDamage(float damageAmount)
     {
         CurrentHP = Mathf.Clamp(CurrentHP - damageAmount, 0, MaxHP);
-        Debug.Log($"{gameObject.name} took {damageAmount} damage! new HP is {CurrentHP}"); ;
+        //Debug.Log($"{gameObject.name} took {damageAmount} damage! new HP is {CurrentHP}"); ;
         if (CurrentHP <= 0)
         {
             Die();
@@ -57,24 +57,24 @@ public abstract class UnitBase : MonoBehaviour
         {
             player.ModifyInkCount(InkValue);
         }
-        Debug.Log($"{gameObject.name} says: Man I'm dead");
+        //Debug.Log($"{gameObject.name} says: Man I'm dead");
         Destroy(gameObject);
     }
 
     public virtual void TriggerAttack(Vector3 attackTargetWorldPosition)
     {
-        Debug.Log($"TriggerAttack called on {gameObject.name}");
+        //Debug.Log($"TriggerAttack called on {gameObject.name}");
 
 
         if (attackObject == null)
         {
-            Debug.LogWarning($"Attack object on {gameObject.name} is null, cannot trigger attack");
+            //Debug.LogWarning($"Attack object on {gameObject.name} is null, cannot trigger attack");
             return;
         }
 
         if (!attackReady)
         {
-            Debug.Log("Attack not ready");
+            //Debug.Log("Attack not ready on {gameObject.name}");
             return;
         }
         float attackAngle = CalculateAttackAngle(attackTargetWorldPosition);
