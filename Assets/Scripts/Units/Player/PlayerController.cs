@@ -1,23 +1,29 @@
 using UnityEngine;
-using UnityEngine.LowLevel;
 using System;
 
 public class PlayerController : UnitBase
 {
     public static event Action<Vector2> OnDoodleChargeCommand;
 
+    [Header("Ink")]
     public int InkCount { get; private set; }
     public int maxInkCount = 10;
 
-    private Rigidbody2D rb;
-    private SpriteRenderer spriteRenderer;
+    [Header("UI")]
+    [SerializeField] private HealthBar healthBar;
 
+    private Rigidbody2D rb;
+    [SerializeField] private Transform graphicsTransform;
     private Vector2 input;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(CurrentHP, MaxHP);
+        }
     }
 
     void Update()
@@ -30,14 +36,13 @@ public class PlayerController : UnitBase
         Camera mainCam = Camera.main;
         Vector3 mouseWorldPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
 
-        // Flip sprite depending on mouse position
         if (mouseWorldPos.x < transform.position.x)
         {
-            spriteRenderer.flipX = true;
+            graphicsTransform.localScale = new Vector3(-1, 1, 1);
         }
         else
         {
-            spriteRenderer.flipX = false;
+            graphicsTransform.localScale = new Vector3(1, 1, 1);
         }
 
         if (Input.GetMouseButton(0))
@@ -48,7 +53,6 @@ public class PlayerController : UnitBase
         if (Input.GetMouseButtonDown(1))
         {
             Vector2 clickedPosition = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
-
             OnDoodleChargeCommand?.Invoke(clickedPosition);
         }
     }
@@ -58,9 +62,18 @@ public class PlayerController : UnitBase
         rb.linearVelocity = input * Speed;
     }
 
+    public override void TakeDamage(float damageAmount)
+    {
+        base.TakeDamage(damageAmount);
+
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(CurrentHP, MaxHP);
+        }
+    }
+
     public void ModifyInkCount(int inkDelta)
     {
         InkCount = Mathf.Clamp(InkCount + inkDelta, 0, maxInkCount);
-        //Debug.Log("Current count: " + InkCount);
     }
 }

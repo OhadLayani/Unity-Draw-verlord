@@ -1,14 +1,19 @@
 using UnityEngine;
-
+using TMPro;
 public class DoodleSpawner : MonoBehaviour
 {
     [SerializeField] private PlayerController player;
     [SerializeField] private GameObject minionPrefab;
 
+    [SerializeField] private TMP_Text doodleCounterText;
+    private int doodlesSpawned = 0;
+
     private void Awake()
     {
         if (player == null)
             player = GetComponent<PlayerController>();
+
+        UpdateCounterUI();
     }
 
     private void Update()
@@ -16,6 +21,7 @@ public class DoodleSpawner : MonoBehaviour
         if (player.InkCount >= player.maxInkCount)
         {
             SpawnMinion();
+
             player.ModifyInkCount(-player.maxInkCount);
         }
     }
@@ -27,5 +33,17 @@ public class DoodleSpawner : MonoBehaviour
         Vector3 spawnPosition = transform.position + (Vector3)randomOffset;
 
         Instantiate(minionPrefab, spawnPosition, Quaternion.identity);
+
+        doodlesSpawned++;
+
+        UpdateCounterUI();
+    }
+
+    private void UpdateCounterUI()
+    {
+        if (doodleCounterText != null)
+        {
+            doodleCounterText.text = doodlesSpawned.ToString();
+        }
     }
 }
