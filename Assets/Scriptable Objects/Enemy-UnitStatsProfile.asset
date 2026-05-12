@@ -17,4 +17,5 @@ MonoBehaviour:
   damage: 1
   attackCooldown: 0.35
   attackDuration: 0.15
+  inkValue: 4
   isFriendly: 0

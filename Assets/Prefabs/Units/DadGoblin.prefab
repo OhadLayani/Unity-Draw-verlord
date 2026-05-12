@@ -76,6 +76,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6959ad89a73d6aa408650c03f0e221a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFollow
+  profile: {fileID: 11400000, guid: 63a202b2066d23a448ed58c6a4531308, type: 2}
+  attackObject: {fileID: 7199464558446219202}
   speed: 2
   stopDistance: 1.4
 --- !u!114 &7125286825467811624
@@ -85,7 +87,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 23914028274850372}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a687f315db949940af9bab3e6b1b397, type: 3}
   m_Name: 
@@ -259,6 +261,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5386244995702755770, guid: e6f840b62d092924dabab91ee856afca, type: 3}
   m_PrefabInstance: {fileID: 2029859250200451234}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7199464558446219202 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9205956755598514016, guid: e6f840b62d092924dabab91ee856afca, type: 3}
+  m_PrefabInstance: {fileID: 2029859250200451234}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6746438325733753398
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -271,6 +278,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hurtbox
       objectReference: {fileID: 0}
+    - target: {fileID: 4499481603196694649, guid: e2cccc89725d95041b853deac3b6df8c, type: 3}
+      propertyPath: unit
+      value: 
+      objectReference: {fileID: 82236495091187513}
     - target: {fileID: 4499481603196694649, guid: e2cccc89725d95041b853deac3b6df8c, type: 3}
       propertyPath: stats
       value: 

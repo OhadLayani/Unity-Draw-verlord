@@ -119,6 +119,36 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &237721940 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8423984620139240824, guid: 08eb1b44a28e3c040996fcd2dab4248b, type: 3}
+  m_PrefabInstance: {fileID: 1302123755}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &237721941 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5221730953158077353, guid: 08eb1b44a28e3c040996fcd2dab4248b, type: 3}
+  m_PrefabInstance: {fileID: 1302123755}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237721940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5752cc13eb46f9149b55687abc15c983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+--- !u!114 &237721944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237721940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f133dc76ed03c04d877c52f8d660fa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoodleSpawner
+  player: {fileID: 237721941}
+  minionPrefab: {fileID: 2127410828400835033, guid: b633d88a075a338438b3940d3437682d, type: 3}
 --- !u!1 &647578533
 GameObject:
   m_ObjectHideFlags: 0
@@ -446,8 +476,59 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8423984620139240824, guid: 08eb1b44a28e3c040996fcd2dab4248b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 237721944}
   m_SourcePrefab: {fileID: 100100000, guid: 08eb1b44a28e3c040996fcd2dab4248b, type: 3}
+--- !u!1 &1561626720
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1561626722}
+  - component: {fileID: 1561626721}
+  m_Layer: 0
+  m_Name: EnemyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1561626721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1561626720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 572bd181034d78c44b3ec8eba712c6b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
+  enemyPrefab: {fileID: 23914028274850372, guid: bbe557e2de73ae643a43fc320820a707, type: 3}
+  maxEnemies: 5
+  spawnDelay: 3
+  spawnOffset: 2
+--- !u!4 &1561626722
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1561626720}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -455,3 +536,4 @@ SceneRoots:
   - {fileID: 647578536}
   - {fileID: 1302123755}
   - {fileID: 719267251}
+  - {fileID: 1561626722}

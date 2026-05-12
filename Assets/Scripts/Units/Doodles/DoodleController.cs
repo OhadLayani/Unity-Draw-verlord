@@ -13,6 +13,13 @@ public class DoodleController : UnitBase
     public float speed = 3f;
     public float stopDistance = 2.8f;
 
+    [Header("Follow Offset")]
+    [SerializeField] private float followOffsetRadius = 1.5f;
+    private Vector2 followOffset;
+
+    [Header("Attack Surround")]
+    [SerializeField] private float attackSurroundRadius = 1.2f;
+    private Vector2 attackOffset;
     [Header("Charge")]
     public float chargeStopDistance = 0.2f;
     public float idleTimeAtChargeLocation = 10f;
@@ -25,24 +32,28 @@ public class DoodleController : UnitBase
     private Vector2 chargeTargetPosition;
     private float chargeIdleTimer;
     private Hurtbox attackTarget;
+
     void Start()
+
     {
+
         rb = GetComponent<Rigidbody2D>();
 
-        PlayerMovements playerMovement = FindFirstObjectByType<PlayerMovements>();
+        followOffset = Random.insideUnitCircle.normalized * followOffsetRadius;
 
-        if (playerMovement != null)
+        PlayerController playerController = FindFirstObjectByType<PlayerController>();
+
+        if (playerController != null)
         {
-            player = playerMovement.transform;
+            player = playerController.transform;
         }
         else
         {
-            Debug.LogError("No PlayerMovement found in the scene.");
+            Debug.LogError("No PlayerController found in the scene.");
         }
     }
 
-    /*
-    private void OnEnable() FIXME
+    private void OnEnable()
     {
         PlayerController.OnDoodleChargeCommand += OnChargeCommand;
     }
@@ -50,7 +61,7 @@ public class DoodleController : UnitBase
     private void OnDisable()
     {
         PlayerController.OnDoodleChargeCommand -= OnChargeCommand;
-    }*/
+    }
 
     private void OnChargeCommand(Vector2 targetPosition)
     {
@@ -61,9 +72,11 @@ public class DoodleController : UnitBase
 
     void FixedUpdate()
     {
-        if (player == null) return;
+        if (player == null || rb == null)
+            return;
 
-        Vector2 toPlayer = player.position - transform.position;
+        Vector2 followPosition = (Vector2)player.position + followOffset;
+        Vector2 toPlayer = followPosition - (Vector2)transform.position;
         float distanceToPlayer = toPlayer.magnitude;
 
         switch (currentState)
@@ -81,7 +94,6 @@ public class DoodleController : UnitBase
 
                     break;
                 }
-
 
             case DOODLE_STATE.CHARGE:
                 {
@@ -113,6 +125,7 @@ public class DoodleController : UnitBase
 
                     break;
                 }
+
             case DOODLE_STATE.ATTACK:
                 {
                     if (attackTarget == null)
@@ -121,7 +134,8 @@ public class DoodleController : UnitBase
                         break;
                     }
 
-                    Vector2 toTarget = attackTarget.transform.position - transform.position;
+                    Vector2 targetPosition = (Vector2)attackTarget.transform.position + attackOffset;
+                    Vector2 toTarget = targetPosition - (Vector2)transform.position;
                     float distanceToTarget = toTarget.magnitude;
 
                     if (distanceToTarget <= stopDistance)
@@ -129,24 +143,17 @@ public class DoodleController : UnitBase
                         rb.linearVelocity = Vector2.zero;
 
                         Debug.Log("ATTACK");
+                        TriggerAttack(attackTarget.transform.position);
 
                         break;
                     }
 
                     Vector2 moveDir = toTarget.normalized;
-
                     rb.linearVelocity = moveDir * speed;
 
                     break;
                 }
         }
-    }
-    //Helpers
-    private void StartCharge(Vector2 targetPosition)
-    {
-        chargeTargetPosition = targetPosition;
-        chargeIdleTimer = idleTimeAtChargeLocation;
-        currentState = DOODLE_STATE.CHARGE;
     }
 
     private void ReturnToDuckling()
@@ -175,9 +182,8 @@ public class DoodleController : UnitBase
         if (hurtbox.HurtboxIsFriendly == IsFriendly)
             return;
 
-
         attackTarget = hurtbox;
-
+        attackOffset = Random.insideUnitCircle.normalized * attackSurroundRadius;
         currentState = DOODLE_STATE.ATTACK;
 
         Debug.Log("Enemy detected");

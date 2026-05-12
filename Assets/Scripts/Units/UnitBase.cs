@@ -7,7 +7,7 @@ public abstract class UnitBase : MonoBehaviour
 {
     [SerializeField] private UnitStatProfile profile;
     [SerializeField] private GameObject attackObject;
-
+    public int InkValue { get; protected set; }
     public float MaxHP { get; protected set; }
     public float CurrentHP { get; protected set; }
     public float Damage { get; protected set; }
@@ -33,8 +33,9 @@ public abstract class UnitBase : MonoBehaviour
         AttackCooldown = profile.attackCooldown;
         AttackDuration = profile.attackDuration;
         IsFriendly = profile.isFriendly;
-
+        InkValue = profile.inkValue;
         if (attackObject != null) { attackObject.SetActive(false); }
+        Debug.Log($"{gameObject.name} IsFriendly set to: {profile.isFriendly}");
 
     }
 
@@ -50,19 +51,32 @@ public abstract class UnitBase : MonoBehaviour
     }
     public virtual void Die()
     {
+        PlayerController player = FindFirstObjectByType<PlayerController>();
+
+        if (player != null)
+        {
+            player.ModifyInkCount(InkValue);
+        }
         Debug.Log($"{gameObject.name} says: Man I'm dead");
+        Destroy(gameObject);
     }
 
     public virtual void TriggerAttack(Vector3 attackTargetWorldPosition)
     {
+        Debug.Log($"TriggerAttack called on {gameObject.name}");
+
+
         if (attackObject == null)
         {
             Debug.LogWarning($"Attack object on {gameObject.name} is null, cannot trigger attack");
             return;
         }
 
-        if (!attackReady) return;
-        
+        if (!attackReady)
+        {
+            Debug.Log("Attack not ready");
+            return;
+        }
         float attackAngle = CalculateAttackAngle(attackTargetWorldPosition);
 
         attackObject.transform.rotation = Quaternion.Euler(0f, 0f, attackAngle);
