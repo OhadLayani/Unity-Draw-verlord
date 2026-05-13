@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEditor.U2D;
 using UnityEngine;
 
@@ -36,6 +37,8 @@ public class DoodleController : UnitBase
     private Vector2 chargeTargetPosition;
     private float chargeIdleTimer;
     private Hurtbox attackTarget;
+
+    private bool canMove = true;
 
     void Start()
     {
@@ -85,47 +88,43 @@ public class DoodleController : UnitBase
         {
             case DOODLE_STATE.DUCKLING:
                 {
-                    if (distanceToPlayer <= stopDistance)
-                    {
-                        rb.linearVelocity = Vector2.zero;
-                        break;
-                    }
-
-                    Vector2 moveDir = toPlayer.normalized;
-                    rb.linearVelocity = moveDir * Speed;
+                    TriggerMoveToPoint((Vector2)player.position);
 
                     spriteRenderer.sprite = spriteFrames[0];
-                    break;
+
+                    if (attackTarget != null)
+                    {
+                        currentState = DOODLE_STATE.CHARGE;
+                    }
                 }
+                break;
 
             case DOODLE_STATE.CHARGE:
                 {
-                    if (!IsVisibleOnScreen())
+                    if (!IsVisibleOnScreen()) //if invisible it returns to duckling
                     {
                         ReturnToDuckling();
                         break;
                     }
 
+                    if (attackTarget == null)
+                    {
+                        currentState = DOODLE_STATE.DUCKLING;
+                        break;
+                    }
+
                     spriteRenderer.sprite = spriteFrames[1];
 
-                    Vector2 toTarget = chargeTargetPosition - (Vector2)transform.position;
-                    float distanceToTarget = toTarget.magnitude;
+                    Vector2 enemyPosition = (Vector2)attackTarget.transform.position;
+                    float distanceToEnemy = enemyPosition.magnitude;
 
-                    if (distanceToTarget > chargeStopDistance)
+                    if (distanceToEnemy <= 1.5f)
                     {
-                        Vector2 moveDir = toTarget.normalized;
-                        rb.linearVelocity = moveDir * Speed;
+                        currentState = DOODLE_STATE.ATTACK;
                     }
                     else
                     {
-                        rb.linearVelocity = Vector2.zero;
-
-                        chargeIdleTimer -= Time.fixedDeltaTime;
-
-                        if (chargeIdleTimer <= 0f)
-                        {
-                            ReturnToDuckling();
-                        }
+                        TriggerMoveToPoint(enemyPosition);
                     }
 
                     break;
@@ -139,28 +138,49 @@ public class DoodleController : UnitBase
                         break;
                     }
 
-                    spriteRenderer.sprite = spriteFrames[2];
+                    Vector2 enemyPosition = (Vector2)attackTarget.transform.position;
+                    float distanceToEnemy = enemyPosition.magnitude;
 
-                    Vector2 targetPosition = (Vector2)attackTarget.transform.position + attackOffset;
-                    Vector2 toTarget = targetPosition - (Vector2)transform.position;
-                    float distanceToTarget = toTarget.magnitude;
-
-                    if (distanceToTarget <= stopDistance)
+                    if (!attackReady && distanceToEnemy >= 2f)
                     {
-                        rb.linearVelocity = Vector2.zero;
-
-                        //Debug.Log("ATTACK");
-                        TriggerAttack(attackTarget.transform.position);
-
+                        currentState = DOODLE_STATE.CHARGE;
                         break;
                     }
 
-                    Vector2 moveDir = toTarget.normalized;
-                    rb.linearVelocity = moveDir * Speed;
+                    spriteRenderer.sprite = spriteFrames[2];
+                    TriggerAttack(enemyPosition);
 
-                    break;
+                     break;
                 }
         }
+    }
+
+    private void TriggerMoveToPoint(Vector2 targetPosition)
+    {
+        if (!canMove) return;
+        StartCoroutine(MoveToPoint(targetPosition));
+
+    }
+
+    private IEnumerator MoveToPoint(Vector2 targetPosition)
+    {
+        canMove = false;
+
+        Vector2 toTarget = targetPosition - (Vector2)transform.position;
+        float distanceToTarget = toTarget.magnitude;
+
+        if (distanceToTarget <= 1f) //magic number for now
+        {
+            rb.linearVelocity = Vector2.zero;
+            canMove = true;
+            yield break;
+        }
+
+        rb.linearVelocity = toTarget.normalized * Speed;
+        
+
+        yield return new WaitForSeconds(0.1f);
+        canMove = true;
     }
 
     private void ReturnToDuckling()
@@ -189,9 +209,12 @@ public class DoodleController : UnitBase
         if (hurtbox.HurtboxIsFriendly == IsFriendly)
             return;
 
-        attackTarget = hurtbox;
-        attackOffset = Random.insideUnitCircle.normalized * attackSurroundRadius;
-        currentState = DOODLE_STATE.ATTACK;
+        if (attackTarget == null)
+        {
+            attackTarget = hurtbox;
+        }
+        //attackOffset = Random.insideUnitCircle.normalized * attackSurroundRadius;
+        //currentState = DOODLE_STATE.CHARGE;
 
         //Debug.Log("Enemy detected");
     }

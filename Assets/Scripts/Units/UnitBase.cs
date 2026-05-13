@@ -65,7 +65,6 @@ public abstract class UnitBase : MonoBehaviour
     {
         //Debug.Log($"TriggerAttack called on {gameObject.name}");
 
-
         if (attackObject == null)
         {
             //Debug.LogWarning($"Attack object on {gameObject.name} is null, cannot trigger attack");
