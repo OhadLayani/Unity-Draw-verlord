@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c4dbd5cf9fe65e4a87196782451a3a6, type: 3}
   m_Name: Player-UnitStatsProfile
   m_EditorClassIdentifier: Assembly-CSharp::UnitStatProfile
-  maxHP: 10
-  speed: 2
+  maxHP: 60
+  speed: 3
   damage: 5
   attackCooldown: 0.35
   attackDuration: 0.15
