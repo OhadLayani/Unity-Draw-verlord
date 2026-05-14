@@ -14,7 +14,7 @@ public class PlayerController : UnitBase
     private Rigidbody2D rb;
     [SerializeField] private Transform graphicsTransform;
     private Vector2 input;
-
+    [SerializeField] private GameOverUI gameOverUI;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -52,7 +52,17 @@ public class PlayerController : UnitBase
             OnDoodleChargeCommand?.Invoke(clickedPosition);
         }
     }
+    public override void Die()
+    {
+        base.Die();
+        //Game Over Screen.
+        if (gameOverUI != null)
+        {
+            gameOverUI.ShowGameOver();
+        }
 
+        gameObject.SetActive(false);
+    }
     private void FixedUpdate()
     {
         rb.linearVelocity = input * Speed;

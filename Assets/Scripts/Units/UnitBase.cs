@@ -7,6 +7,8 @@ public abstract class UnitBase : MonoBehaviour
 {
     [SerializeField] private UnitStatProfile profile;
     [SerializeField] private GameObject attackObject;
+    [SerializeField] private HealthBar healthBar;
+
     public int InkValue { get; protected set; }
     public float MaxHP { get; protected set; }
     public float CurrentHP { get; protected set; }
@@ -15,9 +17,13 @@ public abstract class UnitBase : MonoBehaviour
     public float AttackCooldown { get; protected set; }
     public float AttackDuration { get; protected set; }
     public bool IsFriendly { get; protected set; }
-    [SerializeField] private HealthBar healthBar;
+
     protected bool attackReady = true;
 
+    private Vector3 originalScale;
+    private Coroutine hitEffectRoutine;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
     void Awake()
     {
         if (profile == null)
@@ -34,29 +40,72 @@ public abstract class UnitBase : MonoBehaviour
         AttackDuration = profile.attackDuration;
         IsFriendly = profile.isFriendly;
         InkValue = profile.inkValue;
-        if (attackObject != null) { attackObject.SetActive(false); }
-        //Debug.Log($"{gameObject.name} IsFriendly set to: {profile.isFriendly}");
+
+        originalScale = transform.localScale;
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+        }
+        if (attackObject != null)
+        {
+            attackObject.SetActive(false);
+        }
+
         if (healthBar != null)
         {
             healthBar.SetHealth(CurrentHP, MaxHP);
         }
     }
 
-    //TODO attack constructor 
+    //TODO attack constructor
     public virtual void TakeDamage(float damageAmount)
     {
-
         CurrentHP = Mathf.Clamp(CurrentHP - damageAmount, 0, MaxHP);
+
         if (healthBar != null)
         {
             healthBar.SetHealth(CurrentHP, MaxHP);
         }
-        //Debug.Log($"{gameObject.name} took {damageAmount} damage! new HP is {CurrentHP}"); ;
+
+        if (hitEffectRoutine != null)
+        {
+            StopCoroutine(hitEffectRoutine);
+            transform.localScale = originalScale;
+        }
+
+        hitEffectRoutine = StartCoroutine(HitEffectRoutine());
+
+        //Debug.Log($"{gameObject.name} took {damageAmount} damage! new HP is {CurrentHP}");
+
         if (CurrentHP <= 0)
         {
             Die();
         }
+    }
 
+    private IEnumerator HitEffectRoutine()
+    {
+        transform.localScale = new Vector3(
+            originalScale.x * 1.2f,
+            originalScale.y * 0.8f,
+            originalScale.z
+        );
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.red;
+        }
+
+        yield return new WaitForSeconds(0.08f);
+
+        transform.localScale = originalScale;
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = originalColor;
+        }
     }
     public virtual void Die()
     {
@@ -68,13 +117,13 @@ public abstract class UnitBase : MonoBehaviour
         }
 
         //Debug.Log($"{gameObject.name} says: Man I'm dead");
+
         Destroy(gameObject);
     }
 
     public virtual void TriggerAttack(Vector3 attackTargetWorldPosition)
     {
         //Debug.Log($"TriggerAttack called on {gameObject.name}");
-
 
         if (attackObject == null)
         {
@@ -87,6 +136,7 @@ public abstract class UnitBase : MonoBehaviour
             //Debug.Log("Attack not ready on {gameObject.name}");
             return;
         }
+
         float attackAngle = CalculateAttackAngle(attackTargetWorldPosition);
 
         attackObject.transform.rotation = Quaternion.Euler(0f, 0f, attackAngle);
@@ -98,7 +148,9 @@ public abstract class UnitBase : MonoBehaviour
             float angle;
 
             Vector2 direction = attackTargetWorldPosition - attackObject.transform.position;
+
             angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
             return angle;
         }
     }
@@ -106,13 +158,17 @@ public abstract class UnitBase : MonoBehaviour
     protected IEnumerator AttackRoutine()
     {
         //Debug.Log("started Attack");
+
         attackReady = false;
 
         attackObject.SetActive(true);
+
         yield return new WaitForSeconds(AttackDuration);
+
         attackObject.SetActive(false);
 
         yield return new WaitForSeconds(AttackCooldown);
+
         attackReady = true;
     }
 }
