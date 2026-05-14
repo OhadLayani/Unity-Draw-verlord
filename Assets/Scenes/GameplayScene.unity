@@ -1553,9 +1553,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   enemyPrefab: {fileID: 23914028274850372, guid: bbe557e2de73ae643a43fc320820a707, type: 3}
-  maxEnemies: 15
+  maxEnemies: 10
   spawnDelay: 1
   spawnOffset: 2
+  groupDelay: 5
 --- !u!4 &1561626722
 Transform:
   m_ObjectHideFlags: 0

@@ -5,10 +5,15 @@ public class EnemySpawner : MonoBehaviour
     public GameObject enemyPrefab;
     public int maxEnemies = 5;
     public float spawnDelay = 3f;
-    public float spawnOffset = 2f; // how far outside camera bounds to spawn
+    public float spawnOffset = 2f;
+
+    [SerializeField] private float groupDelay = 5f;
 
     private float timer;
     private Camera mainCamera;
+
+    private int enemiesSpawnedThisWave = 0;
+    private bool waitingForNextWave = false;
 
     void Start()
     {
@@ -23,18 +28,33 @@ public class EnemySpawner : MonoBehaviour
             Debug.LogError("camera or enemyPrefab not found");
             return;
         }
-            
-
-        int currentEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length;
-
-        if (currentEnemies >= maxEnemies)
-            return;
 
         timer -= Time.deltaTime;
 
-        if (timer <= 0f)
+        if (timer > 0f)
+            return;
+
+        if (waitingForNextWave)
         {
-            SpawnEnemy();
+            maxEnemies++;
+            enemiesSpawnedThisWave = 0;
+            waitingForNextWave = false;
+
+            timer = spawnDelay;
+            return;
+        }
+
+        SpawnEnemy();
+
+        enemiesSpawnedThisWave++;
+
+        if (enemiesSpawnedThisWave >= maxEnemies)
+        {
+            waitingForNextWave = true;
+            timer = groupDelay;
+        }
+        else
+        {
             timer = spawnDelay;
         }
     }
@@ -42,6 +62,7 @@ public class EnemySpawner : MonoBehaviour
     void SpawnEnemy()
     {
         Debug.Log("spawned enemy");
+
         Vector3 spawnPosition = GetSpawnPositionOutsideCamera();
         Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, transform);
     }
@@ -50,7 +71,6 @@ public class EnemySpawner : MonoBehaviour
     {
         float camHeight = 2f * mainCamera.orthographicSize;
         float camWidth = camHeight * mainCamera.aspect;
-
         Vector3 camPos = mainCamera.transform.position;
 
         int side = Random.Range(0, 4);
@@ -60,22 +80,22 @@ public class EnemySpawner : MonoBehaviour
 
         switch (side)
         {
-            case 0: // Left
+            case 0:
                 x = camPos.x - camWidth / 2f - spawnOffset;
                 y = Random.Range(camPos.y - camHeight / 2f, camPos.y + camHeight / 2f);
                 break;
 
-            case 1: // Right
+            case 1:
                 x = camPos.x + camWidth / 2f + spawnOffset;
                 y = Random.Range(camPos.y - camHeight / 2f, camPos.y + camHeight / 2f);
                 break;
 
-            case 2: // Top
+            case 2:
                 x = Random.Range(camPos.x - camWidth / 2f, camPos.x + camWidth / 2f);
                 y = camPos.y + camHeight / 2f + spawnOffset;
                 break;
 
-            case 3: // Bottom
+            case 3:
                 x = Random.Range(camPos.x - camWidth / 2f, camPos.x + camWidth / 2f);
                 y = camPos.y - camHeight / 2f - spawnOffset;
                 break;
