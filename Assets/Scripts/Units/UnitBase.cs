@@ -1,7 +1,5 @@
 using System.Collections;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
-using UnityEngine.LowLevel;
 
 public abstract class UnitBase : MonoBehaviour
 {
@@ -143,11 +141,11 @@ public abstract class UnitBase : MonoBehaviour
 
         StartCoroutine(AttackRoutine());
 
-        float CalculateAttackAngle(Vector3 attackTargetWorldPosition)
+        float CalculateAttackAngle(Vector3 _attackTargetWorldPosition)
         {
             float angle;
 
-            Vector2 direction = attackTargetWorldPosition - attackObject.transform.position;
+            Vector2 direction = _attackTargetWorldPosition - attackObject.transform.position;
 
             angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
