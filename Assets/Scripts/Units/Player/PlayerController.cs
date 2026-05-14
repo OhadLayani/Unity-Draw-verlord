@@ -10,7 +10,6 @@ public class PlayerController : UnitBase
     public int maxInkCount = 10;
 
     [Header("UI")]
-    [SerializeField] private HealthBar healthBar;
 
     private Rigidbody2D rb;
     [SerializeField] private Transform graphicsTransform;
@@ -20,10 +19,7 @@ public class PlayerController : UnitBase
     {
         rb = GetComponent<Rigidbody2D>();
 
-        if (healthBar != null)
-        {
-            healthBar.SetHealth(CurrentHP, MaxHP);
-        }
+        
     }
 
     void Update()
@@ -62,15 +58,7 @@ public class PlayerController : UnitBase
         rb.linearVelocity = input * Speed;
     }
 
-    public override void TakeDamage(float damageAmount)
-    {
-        base.TakeDamage(damageAmount);
-
-        if (healthBar != null)
-        {
-            healthBar.SetHealth(CurrentHP, MaxHP);
-        }
-    }
+   
 
     public void ModifyInkCount(int inkDelta)
     {

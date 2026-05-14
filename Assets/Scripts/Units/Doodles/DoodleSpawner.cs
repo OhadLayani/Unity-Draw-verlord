@@ -25,11 +25,26 @@ public class DoodleSpawner : MonoBehaviour
             player.ModifyInkCount(-player.maxInkCount);
         }
     }
+    private void OnEnable()
+    {
+        DoodleController.OnDoodleDied += HandleDoodleDied;
+    }
 
+    private void OnDisable()
+    {
+        DoodleController.OnDoodleDied -= HandleDoodleDied;
+    }
+
+    private void HandleDoodleDied(DoodleController doodle)
+    {
+        doodlesSpawned--;
+        doodlesSpawned = Mathf.Max(0, doodlesSpawned);
+
+        UpdateCounterUI();
+    }
     private void SpawnMinion()
     {
         Vector2 randomOffset = Random.insideUnitCircle * 2f;
-
         Vector3 spawnPosition = transform.position + (Vector3)randomOffset;
 
         Instantiate(minionPrefab, spawnPosition, Quaternion.identity);
@@ -46,4 +61,5 @@ public class DoodleSpawner : MonoBehaviour
             doodleCounterText.text = doodlesSpawned.ToString();
         }
     }
+
 }

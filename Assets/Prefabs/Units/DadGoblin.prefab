@@ -78,8 +78,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFollow
   profile: {fileID: 11400000, guid: 63a202b2066d23a448ed58c6a4531308, type: 2}
   attackObject: {fileID: 0}
+  healthBar: {fileID: 0}
   speed: 2
-  stopDistance: 1.4
+  stopDistance: 0.2
 --- !u!114 &7125286825467811624
 MonoBehaviour:
   m_ObjectHideFlags: 0

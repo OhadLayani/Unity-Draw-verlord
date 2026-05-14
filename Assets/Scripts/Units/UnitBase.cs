@@ -15,7 +15,7 @@ public abstract class UnitBase : MonoBehaviour
     public float AttackCooldown { get; protected set; }
     public float AttackDuration { get; protected set; }
     public bool IsFriendly { get; protected set; }
-
+    [SerializeField] private HealthBar healthBar;
     protected bool attackReady = true;
 
     void Awake()
@@ -36,18 +36,27 @@ public abstract class UnitBase : MonoBehaviour
         InkValue = profile.inkValue;
         if (attackObject != null) { attackObject.SetActive(false); }
         //Debug.Log($"{gameObject.name} IsFriendly set to: {profile.isFriendly}");
-
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(CurrentHP, MaxHP);
+        }
     }
 
     //TODO attack constructor 
     public virtual void TakeDamage(float damageAmount)
     {
+
         CurrentHP = Mathf.Clamp(CurrentHP - damageAmount, 0, MaxHP);
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(CurrentHP, MaxHP);
+        }
         //Debug.Log($"{gameObject.name} took {damageAmount} damage! new HP is {CurrentHP}"); ;
         if (CurrentHP <= 0)
         {
             Die();
         }
+
     }
     public virtual void Die()
     {
@@ -57,6 +66,7 @@ public abstract class UnitBase : MonoBehaviour
         {
             player.ModifyInkCount(InkValue);
         }
+
         //Debug.Log($"{gameObject.name} says: Man I'm dead");
         Destroy(gameObject);
     }

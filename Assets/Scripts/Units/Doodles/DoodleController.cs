@@ -1,6 +1,5 @@
-using UnityEditor.U2D;
 using UnityEngine;
-
+using System;
 public class DoodleController : UnitBase
 {
     private enum DOODLE_STATE
@@ -9,7 +8,7 @@ public class DoodleController : UnitBase
         CHARGE,
         ATTACK
     }
-    
+
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Sprite[] spriteFrames;
 
@@ -28,8 +27,6 @@ public class DoodleController : UnitBase
     public float chargeStopDistance = 0.2f;
     public float idleTimeAtChargeLocation = 10f;
 
-    private DOODLE_STATE currentState = DOODLE_STATE.DUCKLING;
-
     private Transform player;
     private Rigidbody2D rb;
 
@@ -37,22 +34,30 @@ public class DoodleController : UnitBase
     private float chargeIdleTimer;
     private Hurtbox attackTarget;
 
-    void Start()
+    private DoodleState currentState;
+    private DucklingState ducklingState;
+    private ChargeState chargeState;
+    private AttackState attackState;
+    public static event Action<DoodleController> OnDoodleDied;
+
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
-        followOffset = Random.insideUnitCircle.normalized * followOffsetRadius;
+        followOffset = UnityEngine.Random.insideUnitCircle.normalized * followOffsetRadius;
 
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
 
         if (playerController != null)
-        {
             player = playerController.transform;
-        }
         else
-        {
             Debug.LogError("No PlayerController found in the scene.");
-        }
+
+        ducklingState = new DucklingState(this);
+        chargeState = new ChargeState(this);
+        attackState = new AttackState(this);
+
+        ChangeState(DOODLE_STATE.DUCKLING);
     }
 
     private void OnEnable()
@@ -65,108 +70,54 @@ public class DoodleController : UnitBase
         PlayerController.OnDoodleChargeCommand -= OnChargeCommand;
     }
 
-    private void OnChargeCommand(Vector2 targetPosition)
-    {
-        chargeTargetPosition = targetPosition;
-        chargeIdleTimer = idleTimeAtChargeLocation;
-        currentState = DOODLE_STATE.CHARGE;
-    }
-
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (player == null || rb == null)
             return;
 
-        Vector2 followPosition = (Vector2)player.position + followOffset;
-        Vector2 toPlayer = followPosition - (Vector2)transform.position;
-        float distanceToPlayer = toPlayer.magnitude;
+        currentState?.Tick();
+    }
 
-        switch (currentState)
+    public override void Die()
+    {
+        OnDoodleDied?.Invoke(this);
+        base.Die();
+    }
+
+    private void ChangeState(DOODLE_STATE newState)
+    {
+        currentState?.Exit();
+
+        switch (newState)
         {
             case DOODLE_STATE.DUCKLING:
-                {
-                    if (distanceToPlayer <= stopDistance)
-                    {
-                        rb.linearVelocity = Vector2.zero;
-                        break;
-                    }
-
-                    Vector2 moveDir = toPlayer.normalized;
-                    rb.linearVelocity = moveDir * Speed;
-
-                    spriteRenderer.sprite = spriteFrames[0];
-                    break;
-                }
+                currentState = ducklingState;
+                break;
 
             case DOODLE_STATE.CHARGE:
-                {
-                    if (!IsVisibleOnScreen())
-                    {
-                        ReturnToDuckling();
-                        break;
-                    }
-
-                    spriteRenderer.sprite = spriteFrames[1];
-
-                    Vector2 toTarget = chargeTargetPosition - (Vector2)transform.position;
-                    float distanceToTarget = toTarget.magnitude;
-
-                    if (distanceToTarget > chargeStopDistance)
-                    {
-                        Vector2 moveDir = toTarget.normalized;
-                        rb.linearVelocity = moveDir * Speed;
-                    }
-                    else
-                    {
-                        rb.linearVelocity = Vector2.zero;
-
-                        chargeIdleTimer -= Time.fixedDeltaTime;
-
-                        if (chargeIdleTimer <= 0f)
-                        {
-                            ReturnToDuckling();
-                        }
-                    }
-
-                    break;
-                }
+                currentState = chargeState;
+                break;
 
             case DOODLE_STATE.ATTACK:
-                {
-                    if (attackTarget == null)
-                    {
-                        currentState = DOODLE_STATE.DUCKLING;
-                        break;
-                    }
-
-                    spriteRenderer.sprite = spriteFrames[2];
-
-                    Vector2 targetPosition = (Vector2)attackTarget.transform.position + attackOffset;
-                    Vector2 toTarget = targetPosition - (Vector2)transform.position;
-                    float distanceToTarget = toTarget.magnitude;
-
-                    if (distanceToTarget <= stopDistance)
-                    {
-                        rb.linearVelocity = Vector2.zero;
-
-                        //Debug.Log("ATTACK");
-                        TriggerAttack(attackTarget.transform.position);
-
-                        break;
-                    }
-
-                    Vector2 moveDir = toTarget.normalized;
-                    rb.linearVelocity = moveDir * Speed;
-
-                    break;
-                }
+                currentState = attackState;
+                break;
         }
+
+        currentState.Enter();
+    }
+
+    private void OnChargeCommand(Vector2 targetPosition)
+    {
+        chargeTargetPosition = targetPosition;
+        chargeIdleTimer = idleTimeAtChargeLocation;
+
+        ChangeState(DOODLE_STATE.CHARGE);
     }
 
     private void ReturnToDuckling()
     {
         rb.linearVelocity = Vector2.zero;
-        currentState = DOODLE_STATE.DUCKLING;
+        ChangeState(DOODLE_STATE.DUCKLING);
     }
 
     private bool IsVisibleOnScreen()
@@ -190,9 +141,113 @@ public class DoodleController : UnitBase
             return;
 
         attackTarget = hurtbox;
-        attackOffset = Random.insideUnitCircle.normalized * attackSurroundRadius;
-        currentState = DOODLE_STATE.ATTACK;
+        attackOffset = UnityEngine.Random.insideUnitCircle.normalized * attackSurroundRadius;
 
-        //Debug.Log("Enemy detected");
+        ChangeState(DOODLE_STATE.ATTACK);
+    }
+
+    private abstract class DoodleState
+    {
+        protected DoodleController doodle;
+
+        protected DoodleState(DoodleController doodle)
+        {
+            this.doodle = doodle;
+        }
+
+        public virtual void Enter() { }
+        public virtual void Tick() { }
+        public virtual void Exit() { }
+    }
+
+    private class DucklingState : DoodleState
+    {
+        public DucklingState(DoodleController doodle) : base(doodle) { }
+
+        public override void Enter()
+        {
+            doodle.spriteRenderer.sprite = doodle.spriteFrames[0];
+        }
+
+        public override void Tick()
+        {
+            Vector2 followPosition = (Vector2)doodle.player.position + doodle.followOffset;
+            Vector2 toPlayer = followPosition - (Vector2)doodle.transform.position;
+
+            if (toPlayer.magnitude <= doodle.stopDistance)
+            {
+                doodle.rb.linearVelocity = Vector2.zero;
+                return;
+            }
+
+            doodle.rb.linearVelocity = toPlayer.normalized * doodle.Speed;
+        }
+    }
+
+    private class ChargeState : DoodleState
+    {
+        public ChargeState(DoodleController doodle) : base(doodle) { }
+
+        public override void Enter()
+        {
+            doodle.spriteRenderer.sprite = doodle.spriteFrames[1];
+        }
+
+        public override void Tick()
+        {
+            if (!doodle.IsVisibleOnScreen())
+            {
+                doodle.ReturnToDuckling();
+                return;
+            }
+
+            Vector2 toTarget = doodle.chargeTargetPosition - (Vector2)doodle.transform.position;
+
+            if (toTarget.magnitude > doodle.chargeStopDistance)
+            {
+                doodle.rb.linearVelocity = toTarget.normalized * doodle.Speed;
+                return;
+            }
+
+            doodle.rb.linearVelocity = Vector2.zero;
+
+            doodle.chargeIdleTimer -= Time.fixedDeltaTime;
+
+            if (doodle.chargeIdleTimer <= 0f)
+            {
+                doodle.ReturnToDuckling();
+            }
+        }
+    }
+
+    private class AttackState : DoodleState
+    {
+        public AttackState(DoodleController doodle) : base(doodle) { }
+
+        public override void Enter()
+        {
+            doodle.spriteRenderer.sprite = doodle.spriteFrames[2];
+        }
+
+        public override void Tick()
+        {
+            if (doodle.attackTarget == null)
+            {
+                doodle.ReturnToDuckling();
+                return;
+            }
+
+            Vector2 targetPosition = (Vector2)doodle.attackTarget.transform.position + doodle.attackOffset;
+            Vector2 toTarget = targetPosition - (Vector2)doodle.transform.position;
+
+            if (toTarget.magnitude <= doodle.stopDistance)
+            {
+                doodle.rb.linearVelocity = Vector2.zero;
+                doodle.TriggerAttack(doodle.attackTarget.transform.position);
+                return;
+            }
+
+            doodle.rb.linearVelocity = toTarget.normalized * doodle.Speed;
+        }
     }
 }
