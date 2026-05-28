@@ -1,13 +1,13 @@
 using System.Collections;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
-using UnityEngine.LowLevel;
 
 public abstract class UnitBase : MonoBehaviour
 {
     [SerializeField] private UnitStatProfile profile;
     [SerializeField] private GameObject attackObject;
+    [SerializeField] private HealthBar healthBar;
 
+    public int InkValue { get; protected set; }
     public float MaxHP { get; protected set; }
     public float CurrentHP { get; protected set; }
     public float Damage { get; protected set; }
@@ -18,6 +18,10 @@ public abstract class UnitBase : MonoBehaviour
 
     protected bool attackReady = true;
 
+    private Vector3 originalScale;
+    private Coroutine hitEffectRoutine;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
     void Awake()
     {
         if (profile == null)
@@ -33,48 +37,118 @@ public abstract class UnitBase : MonoBehaviour
         AttackCooldown = profile.attackCooldown;
         AttackDuration = profile.attackDuration;
         IsFriendly = profile.isFriendly;
+        InkValue = profile.inkValue;
 
-        if (attackObject != null) { attackObject.SetActive(false); }
+        originalScale = transform.localScale;
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+        }
+        if (attackObject != null)
+        {
+            attackObject.SetActive(false);
+        }
+
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(CurrentHP, MaxHP);
+        }
     }
 
-    //TODO attack constructor 
+    //TODO attack constructor
     public virtual void TakeDamage(float damageAmount)
     {
         CurrentHP = Mathf.Clamp(CurrentHP - damageAmount, 0, MaxHP);
-        Debug.Log($"{gameObject.name} took {damageAmount} damage! new HP is {CurrentHP}"); ;
+
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(CurrentHP, MaxHP);
+        }
+
+        if (hitEffectRoutine != null)
+        {
+            StopCoroutine(hitEffectRoutine);
+            transform.localScale = originalScale;
+        }
+
+        hitEffectRoutine = StartCoroutine(HitEffectRoutine());
+
+        //Debug.Log($"{gameObject.name} took {damageAmount} damage! new HP is {CurrentHP}");
+
         if (CurrentHP <= 0)
         {
             Die();
         }
     }
+
+    private IEnumerator HitEffectRoutine()
+    {
+        transform.localScale = new Vector3(
+            originalScale.x * 1.2f,
+            originalScale.y * 0.8f,
+            originalScale.z
+        );
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.red;
+        }
+
+        yield return new WaitForSeconds(0.08f);
+
+        transform.localScale = originalScale;
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = originalColor;
+        }
+    }
     public virtual void Die()
     {
-        Debug.Log($"{gameObject.name} says: Man I'm dead");
+        PlayerController player = FindFirstObjectByType<PlayerController>();
+
+        if (player != null)
+        {
+            player.ModifyInkCount(InkValue);
+        }
+
+        //Debug.Log($"{gameObject.name} says: Man I'm dead");
+
+        Destroy(gameObject);
     }
 
     public virtual void TriggerAttack(Vector3 attackTargetWorldPosition)
     {
+        //Debug.Log($"TriggerAttack called on {gameObject.name}");
+
         if (attackObject == null)
         {
-            Debug.LogWarning($"Attack object on {gameObject.name} is null, cannot trigger attack");
+            //Debug.LogWarning($"Attack object on {gameObject.name} is null, cannot trigger attack");
             return;
         }
 
-        if (!attackReady) return;
-        
+        if (!attackReady)
+        {
+            //Debug.Log("Attack not ready on {gameObject.name}");
+            return;
+        }
+
         float attackAngle = CalculateAttackAngle(attackTargetWorldPosition);
 
         attackObject.transform.rotation = Quaternion.Euler(0f, 0f, attackAngle);
 
         StartCoroutine(AttackRoutine());
 
-        float CalculateAttackAngle(Vector3 attackTargetWorldPosition)
+        float CalculateAttackAngle(Vector3 _attackTargetWorldPosition)
         {
             float angle;
 
-            Vector2 direction = attackTargetWorldPosition - attackObject.transform.position;
+            Vector2 direction = _attackTargetWorldPosition - attackObject.transform.position;
+
             angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
             return angle;
         }
     }
@@ -82,13 +156,17 @@ public abstract class UnitBase : MonoBehaviour
     protected IEnumerator AttackRoutine()
     {
         //Debug.Log("started Attack");
+
         attackReady = false;
 
         attackObject.SetActive(true);
+
         yield return new WaitForSeconds(AttackDuration);
+
         attackObject.SetActive(false);
 
         yield return new WaitForSeconds(AttackCooldown);
+
         attackReady = true;
     }
 }

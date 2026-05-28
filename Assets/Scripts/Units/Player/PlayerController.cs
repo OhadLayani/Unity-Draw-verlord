@@ -1,17 +1,25 @@
 using UnityEngine;
-using UnityEngine.LowLevel;
+using System;
 
 public class PlayerController : UnitBase
 {
+    public static event Action<Vector2> OnDoodleChargeCommand;
+
+    [Header("Ink")]
     public int InkCount { get; private set; }
-    private int maxInkCount = 10;
+    public int maxInkCount = 10;
+
+    [Header("UI")]
 
     private Rigidbody2D rb;
+    [SerializeField] private Transform graphicsTransform;
     private Vector2 input;
-   
+    [SerializeField] private GameOverUI gameOverUI;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        
     }
 
     void Update()
@@ -24,20 +32,46 @@ public class PlayerController : UnitBase
         Camera mainCam = Camera.main;
         Vector3 mouseWorldPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
 
+        if (mouseWorldPos.x < transform.position.x)
+        {
+            graphicsTransform.localScale = new Vector3(-1, 1, 1);
+        }
+        else
+        {
+            graphicsTransform.localScale = new Vector3(1, 1, 1);
+        }
+
         if (Input.GetMouseButton(0))
         {
-            
             TriggerAttack(mouseWorldPos);
         }
-    }
 
+        if (Input.GetMouseButtonDown(1))
+        {
+            Vector2 clickedPosition = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
+            OnDoodleChargeCommand?.Invoke(clickedPosition);
+        }
+    }
+    public override void Die()
+    {
+        base.Die();
+        //Game Over Screen.
+        if (gameOverUI != null)
+        {
+            gameOverUI.ShowGameOver();
+        }
+
+        gameObject.SetActive(false);
+    }
     private void FixedUpdate()
     {
         rb.linearVelocity = input * Speed;
     }
 
+   
+
     public void ModifyInkCount(int inkDelta)
     {
-        InkCount = Mathf.Clamp(InkCount + inkDelta, 0, maxInkCount);
+        InkCount = (InkCount + inkDelta);
     }
 }

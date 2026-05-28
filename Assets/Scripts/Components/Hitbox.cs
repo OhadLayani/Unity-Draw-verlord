@@ -10,11 +10,11 @@ public class Hitbox : MonoBehaviour
 
     private Collider2D col;
 
-    private void Awake()
+    private void Start()
     {
         if (attackSource == null)
         {
-            Debug.LogError("No attack source Unit component asssigned on hitbox, falling back on default value");
+          Debug.LogError("No attack source Unit component asssigned on hitbox, falling back on default value");
             HitDamage = 5f;
             HitboxIsFriendly = false;
             return;
@@ -23,16 +23,30 @@ public class Hitbox : MonoBehaviour
         col = GetComponentInParent<Collider2D>();
 
         HitDamage = attackSource.Damage;
+        HitboxIsFriendly = attackSource.IsFriendly;
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("detected collision");
+       // Debug.Log($"Hitbox touched: {other.gameObject.name}");
+      //  Debug.Log($"Detected parent: {(other.transform.parent != null ? other.transform.parent.gameObject.name : "No parent")}");
         if (other.TryGetComponent<Hurtbox>(out var hurtbox))
         {
+            //Debug.Log("Touched hurtbox");
+
+           // Debug.Log($"Hitbox object: {gameObject.name}");
+           // Debug.Log($"Attack source object: {attackSource.gameObject.name}");
+           // Debug.Log($"Attack source live IsFriendly: {attackSource.IsFriendly}");
+           // Debug.Log($"Cached HitboxIsFriendly: {HitboxIsFriendly}");
+           // Debug.Log($"Hurtbox object: {hurtbox.gameObject.name}");
+           // Debug.Log($"Cached HurtboxIsFriendly: {hurtbox.HurtboxIsFriendly}");
+
             if (HitboxIsFriendly == hurtbox.HurtboxIsFriendly)
             {
+                Debug.Log("Same team, ignoring");
                 return;
             }
+
+            Debug.Log("Damage applied");
             hurtbox.TriggerDamageTaken(HitDamage);
         }
     }

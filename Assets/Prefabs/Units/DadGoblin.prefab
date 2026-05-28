@@ -76,16 +76,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6959ad89a73d6aa408650c03f0e221a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFollow
+  profile: {fileID: 11400000, guid: 63a202b2066d23a448ed58c6a4531308, type: 2}
+  attackObject: {fileID: 0}
+  healthBar: {fileID: 0}
   speed: 2
-  stopDistance: 0.9
-  avoidanceRadius: 1.2
-  sidewaysStrength: 4
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  noiseStrength: 0
-  noiseChangeMin: 0.15
-  noiseChangeMax: 0.4
+  stopDistance: 0.2
 --- !u!114 &7125286825467811624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,7 +88,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 23914028274850372}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a687f315db949940af9bab3e6b1b397, type: 3}
   m_Name: 
@@ -279,6 +274,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hurtbox
       objectReference: {fileID: 0}
+    - target: {fileID: 4499481603196694649, guid: e2cccc89725d95041b853deac3b6df8c, type: 3}
+      propertyPath: unit
+      value: 
+      objectReference: {fileID: 82236495091187513}
     - target: {fileID: 4499481603196694649, guid: e2cccc89725d95041b853deac3b6df8c, type: 3}
       propertyPath: stats
       value: 
