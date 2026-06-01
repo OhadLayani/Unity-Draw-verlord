@@ -248,6 +248,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5757307593713501127, guid: e6f840b62d092924dabab91ee856afca, type: 3}
+      propertyPath: attackSource
+      value: 
+      objectReference: {fileID: 82236495091187513}
     - target: {fileID: 9205956755598514016, guid: e6f840b62d092924dabab91ee856afca, type: 3}
       propertyPath: m_Name
       value: Hitbox_Circle

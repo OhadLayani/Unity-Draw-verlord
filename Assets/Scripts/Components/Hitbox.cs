@@ -7,6 +7,7 @@ public class Hitbox : MonoBehaviour
 
     public bool HitboxIsFriendly { get; private set; }
     public float HitDamage { get; private set; }
+    private float _lastHitTime = -Mathf.Infinity;
 
     private Collider2D col;
 
@@ -27,26 +28,21 @@ public class Hitbox : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-       // Debug.Log($"Hitbox touched: {other.gameObject.name}");
-      //  Debug.Log($"Detected parent: {(other.transform.parent != null ? other.transform.parent.gameObject.name : "No parent")}");
         if (other.TryGetComponent<Hurtbox>(out var hurtbox))
         {
-            //Debug.Log("Touched hurtbox");
+            if (HitboxIsFriendly == hurtbox.HurtboxIsFriendly) return;
+            _lastHitTime = Time.time;
+            hurtbox.TriggerDamageTaken(HitDamage);
+        }
+    }
 
-           // Debug.Log($"Hitbox object: {gameObject.name}");
-           // Debug.Log($"Attack source object: {attackSource.gameObject.name}");
-           // Debug.Log($"Attack source live IsFriendly: {attackSource.IsFriendly}");
-           // Debug.Log($"Cached HitboxIsFriendly: {HitboxIsFriendly}");
-           // Debug.Log($"Hurtbox object: {hurtbox.gameObject.name}");
-           // Debug.Log($"Cached HurtboxIsFriendly: {hurtbox.HurtboxIsFriendly}");
-
-            if (HitboxIsFriendly == hurtbox.HurtboxIsFriendly)
-            {
-                Debug.Log("Same team, ignoring");
-                return;
-            }
-
-            Debug.Log("Damage applied");
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (Time.time - _lastHitTime < attackSource.AttackCooldown) return;
+        if (other.TryGetComponent<Hurtbox>(out var hurtbox))
+        {
+            if (HitboxIsFriendly == hurtbox.HurtboxIsFriendly) return;
+            _lastHitTime = Time.time;
             hurtbox.TriggerDamageTaken(HitDamage);
         }
     }
