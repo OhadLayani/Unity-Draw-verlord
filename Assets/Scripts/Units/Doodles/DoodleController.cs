@@ -33,6 +33,7 @@ public class DoodleController : UnitBase
     private Vector2 chargeTargetPosition;
     private float chargeIdleTimer;
     private Hurtbox attackTarget;
+    private Hurtbox markedTarget;
 
     private DoodleState currentState;
     private DucklingState ducklingState;
@@ -63,11 +64,13 @@ public class DoodleController : UnitBase
     private void OnEnable()
     {
         PlayerController.OnDoodleChargeCommand += OnChargeCommand;
+        PlayerController.OnEnemyMarked += OnEnemyMarkedCommand;
     }
 
     private void OnDisable()
     {
         PlayerController.OnDoodleChargeCommand -= OnChargeCommand;
+        PlayerController.OnEnemyMarked -= OnEnemyMarkedCommand;
     }
 
     private void FixedUpdate()
@@ -106,11 +109,21 @@ public class DoodleController : UnitBase
         currentState.Enter();
     }
 
+    private void OnEnemyMarkedCommand(Hurtbox hurtbox)
+    {
+        Debug.Log($"{name} moving to marked enemy");
+        markedTarget = hurtbox;
+        attackTarget = hurtbox;
+        attackOffset = UnityEngine.Random.insideUnitCircle.normalized * attackSurroundRadius;
+        ChangeState(DOODLE_STATE.ATTACK);
+    }
+
     private void OnChargeCommand(Vector2 targetPosition)
     {
+        Debug.Log($"{name} charging to position");
+        markedTarget = null;
         chargeTargetPosition = targetPosition;
         chargeIdleTimer = idleTimeAtChargeLocation;
-
         ChangeState(DOODLE_STATE.CHARGE);
     }
 
@@ -138,6 +151,9 @@ public class DoodleController : UnitBase
             return;
 
         if (hurtbox.HurtboxIsFriendly == IsFriendly)
+            return;
+
+        if (markedTarget != null)
             return;
 
         attackTarget = hurtbox;
@@ -233,6 +249,7 @@ public class DoodleController : UnitBase
         {
             if (doodle.attackTarget == null)
             {
+                doodle.markedTarget = null;
                 doodle.ReturnToDuckling();
                 return;
             }
