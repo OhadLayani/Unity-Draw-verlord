@@ -27,6 +27,10 @@ public class DoodleController : UnitBase
     public float chargeStopDistance = 0.2f;
     public float idleTimeAtChargeLocation = 10f;
 
+    [Header("Expendable")]
+    [SerializeField] private int attacksRemaining = 3;
+    [SerializeField] private Hurtbox hurtbox;
+
     private Transform player;
     private Rigidbody2D rb;
 
@@ -59,6 +63,9 @@ public class DoodleController : UnitBase
         attackState = new AttackState(this);
 
         ChangeState(DOODLE_STATE.DUCKLING);
+
+        if (hurtbox != null)
+            hurtbox.gameObject.SetActive(false);
     }
 
     private void OnEnable()
@@ -79,6 +86,17 @@ public class DoodleController : UnitBase
             return;
 
         currentState?.Tick();
+    }
+
+    public override void TriggerAttack(Vector3 attackTargetWorldPosition)
+    {
+        if (!attackReady) return;
+
+        base.TriggerAttack(attackTargetWorldPosition);
+
+        attacksRemaining--;
+        if (attacksRemaining <= 0)
+            Die();
     }
 
     public override void Die()
