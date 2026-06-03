@@ -13,6 +13,10 @@ public class PlayerController : UnitBase
     [Header("Marking")]
     [SerializeField] private GameObject markingProjectilePrefab;
 
+    [Header("Bounds")]
+    [SerializeField] private Vector2 minBounds;
+    [SerializeField] private Vector2 maxBounds;
+
     [Header("UI")]
 
     private Rigidbody2D rb;
@@ -83,6 +87,11 @@ public class PlayerController : UnitBase
     private void FixedUpdate()
     {
         rb.linearVelocity = input * Speed;
+
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Clamp(pos.x, minBounds.x, maxBounds.x);
+        pos.y = Mathf.Clamp(pos.y, minBounds.y, maxBounds.y);
+        transform.position = pos;
     }
 
    
