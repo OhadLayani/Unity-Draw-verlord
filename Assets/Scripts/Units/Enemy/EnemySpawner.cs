@@ -5,6 +5,17 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("Prefab")]
     public GameObject enemyPrefab;
+    public GameObject babyGoblinPrefab;
+    public GameObject rangedEnemyPrefab;
+    public GameObject bossPrefab;
+
+    [Header("Boss")]
+    public float bossSpawnTime = 120f;
+
+    [Header("Ranged Unlock")]
+    [Tooltip("Seconds after spawner starts before ranged enemies can appear")]
+    public float rangedUnlockTime = 30f;
+    [Range(0f, 1f)] public float rangedSpawnChance = 0.3f;
 
     [Header("Wave Settings")]
     public int maxEnemies = 5;
@@ -23,14 +34,17 @@ public class EnemySpawner : MonoBehaviour
     public float spawnOffset = 2f;
 
     private Camera mainCamera;
+    private float elapsedTime = 0f;
     private int waveCount = 0;
     private int enemiesSpawnedThisWave = 0;
     private int wavesSinceLastPattern = 0;
+    private bool bossSpawned = false;
 
     private SpawnerState currentState;
     private SpawningState spawningState;
     private WaveBreakState waveBreakState;
     private PatternSpawningState patternSpawningState;
+    private BossFightState bossFightState;
 
     private void Start()
     {
@@ -39,6 +53,7 @@ public class EnemySpawner : MonoBehaviour
         spawningState = new SpawningState(this);
         waveBreakState = new WaveBreakState(this);
         patternSpawningState = new PatternSpawningState(this);
+        bossFightState = new BossFightState(this);
 
         ChangeState(spawningState);
     }
@@ -46,6 +61,16 @@ public class EnemySpawner : MonoBehaviour
     private void Update()
     {
         if (enemyPrefab == null || mainCamera == null) return;
+
+        elapsedTime += Time.deltaTime;
+
+        if (!bossSpawned && bossPrefab != null && elapsedTime >= bossSpawnTime)
+        {
+            bossSpawned = true;
+            ChangeState(bossFightState);
+            return;
+        }
+
         currentState?.Tick();
     }
 
@@ -83,9 +108,24 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    private GameObject PickRotationPrefab()
+    {
+        bool rangedUnlocked = elapsedTime >= rangedUnlockTime && rangedEnemyPrefab != null;
+
+        if (rangedUnlocked && Random.value < rangedSpawnChance)
+            return rangedEnemyPrefab;
+
+        return enemyPrefab;
+    }
+
     private void SpawnAt(Vector3 position)
     {
-        Instantiate(enemyPrefab, position, Quaternion.identity, transform);
+        SpawnAt(position, PickRotationPrefab());
+    }
+
+    private void SpawnAt(Vector3 position, GameObject prefab)
+    {
+        Instantiate(prefab, position, Quaternion.identity, transform);
     }
 
     private Vector3 GetEdgePosition(int side, float t)
@@ -169,6 +209,7 @@ public class EnemySpawner : MonoBehaviour
         private readonly List<Vector3> spawnPositions = new List<Vector3>();
         private float timer;
         private int index;
+        private GameObject prefabToSpawn;
 
         public PatternSpawningState(EnemySpawner spawner) : base(spawner) { }
 
@@ -184,9 +225,15 @@ public class EnemySpawner : MonoBehaviour
             Debug.Log($"Pattern wave: {pattern} from side {side}");
 
             if (pattern == Pattern.CONCENTRATED)
+            {
+                prefabToSpawn = spawner.enemyPrefab;
                 BuildConcentrated(side);
+            }
             else
+            {
+                prefabToSpawn = spawner.babyGoblinPrefab != null ? spawner.babyGoblinPrefab : spawner.enemyPrefab;
                 BuildLine(side);
+            }
         }
 
         public override void Tick()
@@ -194,7 +241,7 @@ public class EnemySpawner : MonoBehaviour
             timer -= Time.deltaTime;
             if (timer > 0f) return;
 
-            spawner.SpawnAt(spawnPositions[index]);
+            spawner.SpawnAt(spawnPositions[index], prefabToSpawn);
             index++;
             timer = spawner.rapidSpawnDelay;
 
@@ -218,6 +265,28 @@ public class EnemySpawner : MonoBehaviour
             {
                 float t = (float)i / (count - 1);
                 spawnPositions.Add(spawner.GetEdgePosition(side, t));
+            }
+        }
+    }
+
+    private class BossFightState : SpawnerState
+    {
+        private GameObject bossInstance;
+
+        public BossFightState(EnemySpawner spawner) : base(spawner) { }
+
+        public override void Enter()
+        {
+            Debug.Log("Boss fight starting!");
+            bossInstance = Instantiate(spawner.bossPrefab, spawner.GetRandomSpawnPosition(), Quaternion.identity, spawner.transform);
+        }
+
+        public override void Tick()
+        {
+            if (bossInstance == null)
+            {
+                Debug.Log("Boss defeated, resuming normal spawning.");
+                spawner.ChangeState(spawner.spawningState);
             }
         }
     }
