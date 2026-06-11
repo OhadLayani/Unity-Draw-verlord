@@ -6,6 +6,7 @@ public abstract class UnitBase : MonoBehaviour
     [SerializeField] private UnitStatProfile profile;
     [SerializeField] private GameObject attackObject;
     [SerializeField] private HealthBar healthBar;
+    [SerializeField] private GameObject inkOrbPrefab;
 
     public int InkValue { get; protected set; }
     public float MaxHP { get; protected set; }
@@ -109,12 +110,24 @@ public abstract class UnitBase : MonoBehaviour
     {
         PlayerController player = FindFirstObjectByType<PlayerController>();
 
-        if (player != null)
+        if (player != null && inkOrbPrefab != null)
         {
+            for (int i = 0; i < InkValue; i++)
+            {
+                Vector2 offset = Random.insideUnitCircle * 0.6f;
+                GameObject orb = Instantiate(inkOrbPrefab, (Vector2)transform.position + offset, Quaternion.identity);
+                InkOrb inkOrb = orb.GetComponent<InkOrb>();
+                if (inkOrb != null)
+                    inkOrb.Init(player, Random.Range(0.1f, 0.4f));
+                else
+                    Destroy(orb);
+            }
+        }
+        else if (player != null)
+        {
+            // Fallback if no orb prefab is assigned — grants ink directly
             player.ModifyInkCount(InkValue);
         }
-
-        //Debug.Log($"{gameObject.name} says: Man I'm dead");
 
         Destroy(gameObject);
     }

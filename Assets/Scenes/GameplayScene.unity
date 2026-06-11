@@ -226,6 +226,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 284764513}
   m_CullTransparentMesh: 1
+--- !u!1 &308093140 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1903063053800750380, guid: 08eb1b44a28e3c040996fcd2dab4248b, type: 3}
+  m_PrefabInstance: {fileID: 1302123755}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &346748472
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -475,6 +480,10 @@ PrefabInstance:
     - target: {fileID: 7669920151366968609, guid: 8fc47e7ba315598418680aaae47fd3d6, type: 3}
       propertyPath: m_Name
       value: The Goblin Protector SHARSHABIL (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7669920151366968609, guid: 8fc47e7ba315598418680aaae47fd3d6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1973,6 +1982,8 @@ MonoBehaviour:
   enemyPrefab: {fileID: 23914028274850372, guid: bbe557e2de73ae643a43fc320820a707, type: 3}
   babyGoblinPrefab: {fileID: 23914028274850372, guid: 542cd3e9bb9bb2e41bc1e23ec1464165, type: 3}
   rangedEnemyPrefab: {fileID: 23914028274850372, guid: 2a1fd9626cd333f4393ab66dd40fbcd2, type: 3}
+  bossPrefab: {fileID: 7669920151366968609, guid: 8fc47e7ba315598418680aaae47fd3d6, type: 3}
+  bossSpawnTime: 120
   rangedUnlockTime: 30
   rangedSpawnChance: 0.4
   maxEnemies: 10
@@ -2165,6 +2176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossIntroUI
   bossCamera: {fileID: 746939260}
+  playerCamera: {fileID: 308093140}
   nameBanner: {fileID: 284764513}
   nameText: {fileID: 1784218104}
 --- !u!4 &1706836397
@@ -2829,6 +2841,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2122323766}
   m_CullTransparentMesh: 0
+--- !u!1001 &7072853335519488984
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1027183472213003500, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_Name
+      value: Ink Orb
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343810252476256610, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.25479
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343810252476256610, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.4888
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343810252476256610, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343810252476256610, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343810252476256610, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343810252476256610, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343810252476256610, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343810252476256610, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343810252476256610, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343810252476256610, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
 --- !u!1001 &7968447095566388093
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2906,3 +2975,4 @@ SceneRoots:
   - {fileID: 746939262}
   - {fileID: 436525194}
   - {fileID: 1706836397}
+  - {fileID: 7072853335519488984}
