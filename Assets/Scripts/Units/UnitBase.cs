@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,6 +7,10 @@ public abstract class UnitBase : MonoBehaviour
     [SerializeField] private UnitStatProfile profile;
     [SerializeField] private GameObject attackObject;
     [SerializeField] private HealthBar healthBar;
+    [SerializeField] private GameObject inkOrbPrefab;
+
+
+    public event Action OnDeath;
 
     public int InkValue { get; protected set; }
     public float MaxHP { get; protected set; }
@@ -107,16 +112,38 @@ public abstract class UnitBase : MonoBehaviour
     }
     public virtual void Die()
     {
+        OnDeath?.Invoke();
+
         PlayerController player = FindFirstObjectByType<PlayerController>();
 
-        if (player != null)
+        if (player != null && inkOrbPrefab != null)
         {
+            for (int i = 0; i < InkValue; i++)
+            {
+                Vector2 offset = UnityEngine.Random.insideUnitCircle * 0.6f;
+                GameObject orb = Instantiate(inkOrbPrefab, (Vector2)transform.position + offset, Quaternion.identity);
+                InkOrb inkOrb = orb.GetComponent<InkOrb>();
+                if (inkOrb != null)
+                    inkOrb.Init(player, UnityEngine.Random.Range(0.1f, 0.4f));
+                else
+                    Destroy(orb);
+            }
+        }
+        else if (player != null)
+        {
+            // Fallback if no orb prefab is assigned — grants ink directly
             player.ModifyInkCount(InkValue);
         }
 
-        //Debug.Log($"{gameObject.name} says: Man I'm dead");
-
         Destroy(gameObject);
+    }
+
+    public void Heal(float amount)
+    {
+        CurrentHP = Mathf.Clamp(CurrentHP + amount, 0, MaxHP);
+
+        if (healthBar != null)
+            healthBar.SetHealth(CurrentHP, MaxHP);
     }
 
     public virtual void TriggerAttack(Vector3 attackTargetWorldPosition)

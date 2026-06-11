@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 6135126736576849125}
   - component: {fileID: 82236495091187513}
   - component: {fileID: 7125286825467811624}
-  - component: {fileID: 8585407733014346432}
+  - component: {fileID: 1785652089636943663}
   m_Layer: 0
-  m_Name: DadGoblin
+  m_Name: Ranged Gobbo
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72,7 +72,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 23914028274850372}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6959ad89a73d6aa408650c03f0e221a7, type: 3}
   m_Name: 
@@ -81,7 +81,7 @@ MonoBehaviour:
   attackObject: {fileID: 0}
   healthBar: {fileID: 0}
   inkOrbPrefab: {fileID: 1027183472213003500, guid: fd2a0d12824865549b201ef05c8c0b21, type: 3}
-  StopDistance: 0.5
+  StopDistance: 2.8
   SeparationRadius: 1.2
   SeparationWeight: 1.2
   EnemyLayerMask:
@@ -101,8 +101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a687f315db949940af9bab3e6b1b397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitStats
-  profile: {fileID: 11400000, guid: 63a202b2066d23a448ed58c6a4531308, type: 2}
---- !u!114 &8585407733014346432
+  profile: {fileID: 11400000, guid: e97d0a6dca2b1934194cc3ba2f81548d, type: 2}
+--- !u!114 &1785652089636943663
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -111,12 +111,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 23914028274850372}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a12d495bd2a6d54badf6d5c8838ed5d, type: 3}
+  m_Script: {fileID: 11500000, guid: 2bb15abb66aa336419accab437c9455c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropOnDeath
-  drops:
-  - prefab: {fileID: 2246769531821529693, guid: 94e03e6ea976fca4085f4ddf6c5ebeaf, type: 3}
-    chance: 0.05
+  m_EditorClassIdentifier: Assembly-CSharp::RangedEnemyControl
+  profile: {fileID: 11400000, guid: e97d0a6dca2b1934194cc3ba2f81548d, type: 2}
+  attackObject: {fileID: 0}
+  healthBar: {fileID: 0}
+  inkOrbPrefab: {fileID: 0}
+  speed: 2
+  stopDistance: 8
+  projectilePrefab: {fileID: 8407268713389575986, guid: ab25958620e69ba4cbfa03bbf0ef2ad9, type: 3}
+  firePoint: {fileID: 0}
+  fireCooldown: 1
 --- !u!1 &8447245951095168553
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1c4dbd5cf9fe65e4a87196782451a3a6, type: 3}
-  m_Name: Player-UnitStatsProfile
+  m_Name: Sharshabil
   m_EditorClassIdentifier: Assembly-CSharp::UnitStatProfile
-  maxHP: 60
-  speed: 4
-  damage: 15
+  maxHP: 300
+  speed: 1.5
+  damage: 5
   attackCooldown: 0.35
   attackDuration: 0.15
-  inkValue: 0
-  isFriendly: 1
+  inkValue: 20
+  isFriendly: 0
