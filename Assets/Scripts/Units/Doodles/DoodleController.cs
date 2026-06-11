@@ -50,6 +50,7 @@ public class DoodleController : UnitBase
         rb = GetComponent<Rigidbody2D>();
 
         followOffset = UnityEngine.Random.insideUnitCircle.normalized * followOffsetRadius;
+        Speed *= UnityEngine.Random.Range(0.75f, 1.25f);
 
         PlayerController playerController = FindFirstObjectByType<PlayerController>();
 
