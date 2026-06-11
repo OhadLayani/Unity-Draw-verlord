@@ -32,7 +32,7 @@ public class UpgradeDrop : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player")) return;
+        if (other.GetComponentInParent<PlayerController>() == null) return;
         if (choiceUI == null) return;
         if (choiceUI.IsOpen) return; // don't open two menus at once
 

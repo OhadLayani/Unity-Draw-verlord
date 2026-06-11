@@ -11,9 +11,7 @@ public class HealthDrop : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player")) return;
-
-        PlayerController player = other.GetComponent<PlayerController>();
+        PlayerController player = other.GetComponentInParent<PlayerController>();
         if (player == null) return;
 
         // Don't pick up if already at full health
