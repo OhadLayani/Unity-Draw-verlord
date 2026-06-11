@@ -78,6 +78,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoodleController
   profile: {fileID: 11400000, guid: 39de82ec917502a4ca71cf62b0d38dd1, type: 2}
   attackObject: {fileID: 362461166530274653}
+  healthBar: {fileID: 0}
   spriteRenderer: {fileID: 7003959719360880918}
   spriteFrames:
   - {fileID: -8965426832240370413, guid: 0195cd53690882343b6542f335edc3b4, type: 3}
@@ -88,6 +89,8 @@ MonoBehaviour:
   attackSurroundRadius: 1.2
   chargeStopDistance: 0.2
   idleTimeAtChargeLocation: 10
+  attacksRemaining: 12
+  hurtbox: {fileID: 0}
 --- !u!58 &2893946429024989682
 CircleCollider2D:
   m_ObjectHideFlags: 0

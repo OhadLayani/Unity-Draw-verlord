@@ -802,9 +802,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   profile: {fileID: 11400000, guid: 811fa474b895ec6428359774e189a38b, type: 2}
   attackObject: {fileID: 4627807261969323020}
-  maxInkCount: 10
   healthBar: {fileID: 4563501755522905417}
+  maxInkCount: 10
+  markingProjectilePrefab: {fileID: 8599896263662699358, guid: 99f78865b7800d94c9bc72d31f335617, type: 3}
+  minBounds: {x: 0, y: 0}
+  maxBounds: {x: 0, y: 0}
   graphicsTransform: {fileID: 7891588900713485657}
+  gameOverUI: {fileID: 0}
 --- !u!1 &8830622697596959656
 GameObject:
   m_ObjectHideFlags: 0
