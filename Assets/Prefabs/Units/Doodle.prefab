@@ -79,6 +79,7 @@ MonoBehaviour:
   profile: {fileID: 11400000, guid: 39de82ec917502a4ca71cf62b0d38dd1, type: 2}
   attackObject: {fileID: 362461166530274653}
   healthBar: {fileID: 0}
+  inkOrbPrefab: {fileID: 0}
   spriteRenderer: {fileID: 7003959719360880918}
   spriteFrames:
   - {fileID: -8965426832240370413, guid: 0195cd53690882343b6542f335edc3b4, type: 3}
@@ -251,6 +252,10 @@ PrefabInstance:
     - target: {fileID: 3873902718771233532, guid: e2cccc89725d95041b853deac3b6df8c, type: 3}
       propertyPath: m_Name
       value: Hurtbox
+      objectReference: {fileID: 0}
+    - target: {fileID: 3873902718771233532, guid: e2cccc89725d95041b853deac3b6df8c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4499481603196694649, guid: e2cccc89725d95041b853deac3b6df8c, type: 3}
       propertyPath: unit
