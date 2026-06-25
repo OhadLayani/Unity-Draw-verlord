@@ -21,7 +21,7 @@ public class Timer : MonoBehaviour
 
         int minutes = Mathf.FloorToInt(_runTime / 60);
         int seconds = Mathf.FloorToInt(_runTime % 60);
-        int miliseconds = Mathf.FloorToInt((_runTime) * 100) -  seconds * 100;
+        int miliseconds = Mathf.FloorToInt((_runTime - Mathf.Floor(_runTime)) * 100);
 
         timerText.text = String.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, miliseconds); ;
     }
