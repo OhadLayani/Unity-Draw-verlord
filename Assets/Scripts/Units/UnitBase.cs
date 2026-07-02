@@ -23,6 +23,10 @@ public abstract class UnitBase : MonoBehaviour
 
     protected bool attackReady = true;
 
+    private float baseSpeed;
+    private float baseDamage;
+    public bool IsSupercharged { get; private set; }
+
     private Vector3 originalScale;
     private Coroutine hitEffectRoutine;
     private SpriteRenderer spriteRenderer;
@@ -39,6 +43,8 @@ public abstract class UnitBase : MonoBehaviour
         CurrentHP = profile.maxHP;
         Damage = profile.damage;
         Speed = profile.speed;
+        baseSpeed = profile.speed;
+        baseDamage = profile.damage;
         AttackCooldown = profile.attackCooldown;
         AttackDuration = profile.attackDuration;
         IsFriendly = profile.isFriendly;
@@ -60,6 +66,22 @@ public abstract class UnitBase : MonoBehaviour
         {
             healthBar.SetHealth(CurrentHP, MaxHP);
         }
+    }
+
+    public void Supercharge(float speedMult, float damageMult)
+    {
+        if (IsSupercharged) return;
+        IsSupercharged = true;
+        Speed = baseSpeed * speedMult;
+        Damage = baseDamage * damageMult;
+    }
+
+    public void RemoveSupercharge()
+    {
+        if (!IsSupercharged) return;
+        IsSupercharged = false;
+        Speed = baseSpeed;
+        Damage = baseDamage;
     }
 
     //TODO attack constructor

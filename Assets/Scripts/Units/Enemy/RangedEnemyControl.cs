@@ -5,12 +5,17 @@ public class RangedEnemyControl : UnitBase
     private enum RANGED_STATE
     {
         MOVE,
-        STOP
+        STOP,
+        RETREAT
     }
 
     [Header("Chase")]
     public float speed = 3f;
     public float stopDistance = 6f;
+
+    [Header("Retreat")]
+    [SerializeField] private float retreatDistance = 3f;
+    [SerializeField] private float retreatSpeed = 4f;
 
     [Header("Ranged Attack")]
     [SerializeField] private GameObject projectilePrefab;
@@ -68,6 +73,12 @@ public class RangedEnemyControl : UnitBase
             case RANGED_STATE.STOP:
                 rb.linearVelocity = Vector2.zero;
 
+                if (distanceToPlayer < retreatDistance)
+                {
+                    currentState = RANGED_STATE.RETREAT;
+                    break;
+                }
+
                 if (distanceToPlayer > stopDistance)
                 {
                     currentState = RANGED_STATE.MOVE;
@@ -80,6 +91,20 @@ public class RangedEnemyControl : UnitBase
                     FireAtPlayer(toPlayer);
                     fireTimer = fireCooldown;
                 }
+                break;
+
+            case RANGED_STATE.RETREAT:
+                rb.linearVelocity = -toPlayer.normalized * retreatSpeed;
+
+                fireTimer -= Time.fixedDeltaTime;
+                if (fireTimer <= 0f)
+                {
+                    FireAtPlayer(toPlayer);
+                    fireTimer = fireCooldown;
+                }
+
+                if (distanceToPlayer >= stopDistance)
+                    currentState = RANGED_STATE.STOP;
                 break;
         }
     }
@@ -97,5 +122,7 @@ public class RangedEnemyControl : UnitBase
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, stopDistance);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, retreatDistance);
     }
 }

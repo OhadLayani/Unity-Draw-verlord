@@ -608,10 +608,8 @@ GameObject:
   - component: {fileID: 6151225844789352620}
   - component: {fileID: 789414780995912269}
   - component: {fileID: 8326981071384710303}
-  - component: {fileID: 9084385640993274414}
-  - component: {fileID: 5359861713685484483}
   m_Layer: 0
-  m_Name: The Goblin Protector SHARSHABIL
+  m_Name: BEEG GOBBO
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -687,34 +685,3 @@ MonoBehaviour:
     m_Bits: 0
   NoiseFrequency: 0.8
   NoiseStrength: 0.15
---- !u!114 &9084385640993274414
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7669920151366968609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e477cbccd4b02774faaa76eadbfb63f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BossIntro
-  bossName: 'The Goblin Protector: SHARSHABIL'
-  introDuration: 3
-  cameraPanTime: 3
---- !u!114 &5359861713685484483
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7669920151366968609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 147ceb802fd2f5c42a02809e7a931c56, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BossAura
-  radius: 15
-  speedMultiplier: 1.5
-  damageMultiplier: 1.5
-  checkInterval: 0.5

@@ -11,6 +11,8 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Boss")]
     public float bossSpawnTime = 120f;
+    public GameObject genericBossPrefab;
+    [Range(0f, 1f)] public float genericBossSpawnChance = 0.15f;
 
     [Header("Ranged Unlock")]
     [Tooltip("Seconds after spawner starts before ranged enemies can appear")]
@@ -39,6 +41,7 @@ public class EnemySpawner : MonoBehaviour
     private int enemiesSpawnedThisWave = 0;
     private int wavesSinceLastPattern = 0;
     private bool bossSpawned = false;
+    private bool postBossPhase = false;
 
     private SpawnerState currentState;
     private SpawningState spawningState;
@@ -114,6 +117,9 @@ public class EnemySpawner : MonoBehaviour
 
         if (rangedUnlocked && Random.value < rangedSpawnChance)
             return rangedEnemyPrefab;
+
+        if (postBossPhase && genericBossPrefab != null && Random.value < genericBossSpawnChance)
+            return genericBossPrefab;
 
         return enemyPrefab;
     }
@@ -286,6 +292,7 @@ public class EnemySpawner : MonoBehaviour
             if (bossInstance == null)
             {
                 Debug.Log("Boss defeated, resuming normal spawning.");
+                spawner.postBossPhase = true;
                 spawner.ChangeState(spawner.spawningState);
             }
         }

@@ -12239,7 +12239,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: -0.000030517578}
+  m_AnchoredPosition: {x: 0.000061035156, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &913349327
@@ -13208,10 +13208,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   enemyPrefab: {fileID: 23914028274850372, guid: bbe557e2de73ae643a43fc320820a707, type: 3}
-  babyGoblinPrefab: {fileID: 0}
-  rangedEnemyPrefab: {fileID: 0}
-  bossPrefab: {fileID: 0}
+  babyGoblinPrefab: {fileID: 23914028274850372, guid: 542cd3e9bb9bb2e41bc1e23ec1464165, type: 3}
+  rangedEnemyPrefab: {fileID: 23914028274850372, guid: 2a1fd9626cd333f4393ab66dd40fbcd2, type: 3}
+  bossPrefab: {fileID: 7669920151366968609, guid: 8fc47e7ba315598418680aaae47fd3d6, type: 3}
   bossSpawnTime: 120
+  genericBossPrefab: {fileID: 7669920151366968609, guid: fcfe0da49cde4c3469e9ea9fc4ab7674, type: 3}
+  genericBossSpawnChance: 0.15
   rangedUnlockTime: 30
   rangedSpawnChance: 0.3
   maxEnemies: 10
